@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+    <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+        });
+    </script>
+    <style>
+        th.sorting {
+            border-left: solid black 1px;
+            border-top: solid black 1px;
+        }
+
+        td {
+            border-left: solid black 1px;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #e7e7e7;
+            background-color: #f3f3f3;
+        }
+
+        li {
+            float: right;
+        }
+
+            li a {
+                display: block;
+                color: #666;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+                li a:hover:not(.active) {
+                    background-color: #ddd;
+                }
+
+                li a.active {
+                    color: white;
+                    background-color: #2196f38f;
+                }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="NewApps-Association.html">פניות חדשות</a></li>
+        <li><a href="AllApps-Association.html">כלל הפניות</a></li>
+        <li><a class="active" href="FinishedApps-Association.html">פניות סגורות</a></li>
+    </ul>
+    <div>
+        <h2>פניות סגורות</h2>
+    </div>
+    <table id="myTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>משך הטיפול</th>
+                <th>תאריך עדכון סטטוס</th>
+                <th>סטטוס</th>
+                <th>סוג הסיוע</th>
+                <th>איזור מגורים</th>
+                <th>מספר טלפון</th>
+                <th>מבקש הסיוע</th>
+                <th>תאריך הפנייה</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>4 days</td>
+                <td>20/01/2023</td>
+                <td>טופל</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>14 days</td>
+                <td>15/01/2023</td>
+                <td>טופל</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>052-2222222</td>
+                <td>בני אברהם</td>
+                <td>16/01/2023</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>1 day</td>
+                <td>11/01/2023</td>
+                <td>אי התאמה</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>054-4444444</td>
+                <td>יהושע לוי</td>
+                <td>16/01/2023</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>5 days</td>
+                <td>15/01/2023</td>
+                <td>טופל</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>054-4444444</td>
+                <td>אבנר דוד</td>
+                <td>16/01/2023</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td>1 day</td>
+                <td>16/01/2023</td>
+                <td>אי התאמה</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>054-4444444</td>
+                <td>גילה בת-שבע</td>
+                <td>16/01/2023</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td>0 days</td>
+                <td>10/01/2023</td>
+                <td>טופל</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ברכה נחומוב</td>
+                <td>16/01/2023</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>15 days</td>
+                <td>16/01/2023</td>
+                <td>טופל</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>054-4444444</td>
+                <td>עליזה יום-טוב</td>
+                <td>16/01/2023</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td>2 days</td>
+                <td>16/01/2023</td>
+                <td>אי התאמה</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>מנחם סוקולוב</td>
+                <td>16/01/2023</td>
+                <td>8</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
