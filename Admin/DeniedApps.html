@@ -1,0 +1,154 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+    <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+        });
+    </script>
+    <style>
+        th.sorting {
+            border-left: solid black 1px;
+            border-top: solid black 1px;
+        }
+        td {
+            border-left: solid black 1px;
+        }
+        h2 {
+            text-align:center;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #e7e7e7;
+            background-color: #f3f3f3;
+        }
+
+        li {
+            float: right;
+        }
+
+            li a {
+                display: block;
+                color: #666;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+                li a:hover:not(.active) {
+                    background-color: #ddd;
+                }
+
+                li a.active {
+                    color: white;
+                    background-color: #2196f38f;
+                }
+        .inputs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .month-input, .select-box {
+            margin: 0 10px;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a href="AllApps-Admin.html">כלל הפניות</a></li>
+        <li><a href="NewApps-Admin.html">פניות חדשות</a></li>
+        <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
+        <li><a class="active" href="DeniedApps.html">פניות שלא הסתייעו</a></li>
+        <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
+    </ul>
+    <div>
+        <h2>פניות שלא הסתייעו</h2>
+        <div class="inputs">
+            <input id="monthInput" class="month-input" type="month" placeholder="חודש" />
+            <select class="select-box" name="cities" id="cities">
+                <option value="תל אביב">תל אביב</option>
+                <option value="ירושלים">ירושלים</option>
+                <option value="חיפה">חיפה</option>
+                <option value="באר שבע">באר שבע</option>
+            </select>
+        </div>
+    </div>
+    <table id="myTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>סיבת סירוב</th>
+                <th>סטטוס</th>
+                <th>עמותה</th>
+                <th>תאריך עדכון סטטוס</th>
+                <th>סוג הסיוע</th>
+                <th>איזור מגורים</th>
+                <th>מספר טלפון</th>
+                <th>מבקש הסיוע</th>
+                <th>תאריך הפנייה</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>לא עומד בקריטריונים</td>
+                <td>אי התאמה</td>
+                <td>לתת</td>
+                <td>16/01/2023</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td>לא הצלחנו לסייע</td>
+                <td>אי התאמה</td>
+                <td>לתת</td>
+                <td>16/01/2023</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>לא נמצאה עמותה</td>
+                <td>-</td>
+                <td>16/01/2023</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>לא עומד בקריטריונים</td>
+                <td>אי התאמה</td>
+                <td>לתת</td>
+                <td>16/01/2023</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>4</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

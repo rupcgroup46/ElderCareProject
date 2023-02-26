@@ -1,0 +1,210 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js"
+            integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
+            crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+    <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#myTable').DataTable();
+        });
+    </script>
+    <style>
+        th.sorting {
+            border-left: solid black 1px;
+            border-top: solid black 1px;
+        }
+
+        td {
+            border-left: solid black 1px;
+        }
+
+        h2 {
+            text-align:center;
+        }
+        ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            border: 1px solid #e7e7e7;
+            background-color: #f3f3f3;
+        }
+
+        li {
+            float: right;
+        }
+
+            li a {
+                display: block;
+                color: #666;
+                text-align: center;
+                padding: 14px 16px;
+                text-decoration: none;
+            }
+
+                li a:hover:not(.active) {
+                    background-color: #ddd;
+                }
+
+                li a.active {
+                    color: white;
+                    background-color: #2196f38f;
+                }
+    </style>
+</head>
+<body>
+    <ul>
+        <li><a class="active" href="AllApps-Admin.html">כלל הפניות</a></li>
+        <li><a href="NewApps-Admin.html">פניות חדשות</a></li>
+        <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
+        <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
+        <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
+    </ul>
+    <div>
+        <h2>כלל הפניות</h2>
+    </div>
+    <table id="myTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>עריכה</th>
+                <th>עמותה</th>
+                <th>תאריך עדכון סטטוס</th>
+                <th>סטטוס</th>
+                <th>סוג הסיוע</th>
+                <th>איזור מגורים</th>
+                <th>מספר טלפון</th>
+                <th>מבקש הסיוע</th>
+                <th>תאריך הפנייה</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>לתת</td>
+                <td>16/01/2023</td>
+                <td>נוצר קשר</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>ישראל ישראלי</td>
+                <td>16/01/2023</td>
+                <td>1</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>טרם נוצר קשר</td>
+                <td>ביגוד</td>
+                <td>הרצליה</td>
+                <td>050-0000000</td>
+                <td>שרה לוי</td>
+                <td>16/01/2023</td>
+                <td>2</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>מהלב לצלחת</td>
+                <td>15/01/2023</td>
+                <td>טופל</td>
+                <td>מזון</td>
+                <td>באר שבע</td>
+                <td>050-0000000</td>
+                <td>חיים כהן</td>
+                <td>01/01/2023</td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>טרם נוצר קשר</td>
+                <td>ביגוד</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>יהושע לוי</td>
+                <td>14/01/2023</td>
+                <td>4</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>האגודה לסיוע לקשיש נס ציונה</td>
+                <td>16/01/2023</td>
+                <td>נוצר קשר</td>
+                <td>מרכז יום</td>
+                <td>נס ציונה</td>
+                <td>050-0000000</td>
+                <td>אבנר דוד</td>
+                <td>15/01/2023</td>
+                <td>5</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>לתת</td>
+                <td>10/01/2023</td>
+                <td>טופל</td>
+                <td>תמיכה</td>
+                <td>ראשון לציון</td>
+                <td>050-0000000</td>
+                <td>עליזה יום-טוב</td>
+                <td>10/01/2023</td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>טרם נוצר קשר</td>
+                <td>תמיכה</td>
+                <td>תל אביב</td>
+                <td>050-0000000</td>
+                <td>גילה בת-שבע</td>
+                <td>16/01/2023</td>
+                <td>7</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>-</td>
+                <td>-</td>
+                <td>טרם נוצר קשר</td>
+                <td>ביגוד</td>
+                <td>אילת</td>
+                <td>050-0000000</td>
+                <td>יוסי כהן</td>
+                <td>16/01/2023</td>
+                <td>8</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>האגודה לסיוע לקשיש מזכרת בתיה</td>
+                <td>16/01/2023</td>
+                <td>תחילת תהליך טיפול</td>
+                <td>מרכז יום</td>
+                <td>מזכרת בתיה</td>
+                <td>050-0000000</td>
+                <td>אלי ישראלי</td>
+                <td>16/01/2023</td>
+                <td>9</td>
+            </tr>
+            <tr>
+                <td><button>מחיקה</button><button>פרטים</button></td>
+                <td>האגודה לסיוע לקשיש בת ים</td>
+                <td>16/01/2023</td>
+                <td>טופל</td>
+                <td>תמיכה</td>
+                <td>בת ים</td>
+                <td>050-0000000</td>
+                <td>בני אברהם</td>
+                <td>14/01/2023</td>
+                <td>10</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>
