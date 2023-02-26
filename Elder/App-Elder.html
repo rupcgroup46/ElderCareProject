@@ -7,6 +7,7 @@
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <!------ Include the above in your HEAD tag ---------->
     <style>
         .contact-form {
@@ -90,32 +91,79 @@
             border-radius: 10px;
             margin: 5px;
         }
+
+        .selected {
+          border: solid rgb(135, 239, 135) 1px;
+          background-color: rgb(135, 239, 135);
+        }
     </style>
     <script>
 
-        window.onload = function () {
-            const nameInput = document.getElementById("nameInput");
-            const phoneInput = document.getElementById("phoneInput");
-            const cityInput = document.getElementById("cityInput");
-            const nameAudio = document.getElementById("nameAudio");
-            const phoneAudio = document.getElementById("nameAudio");
-            const cityAudio = document.getElementById("nameAudio");
+      var selectedDivs = {};
 
-            nameInput.addEventListener("click", function () {
-                nameAudio.play();
-            });
-            phoneInput.addEventListener("click", function () {
-                phoneAudio.play();
-            });
-            cityInput.addEventListener("click", function () {
-                cityAudio.play();
-            });
+      //form submit
+      $(document).ready(function() {
+
+        //form submit
+        $("#helpRequest").submit(function(){
+          const name = $("#nameInput").val();
+          const phoneNum = $("#phoneInput").val();
+          const city = $("#cityInput").val();
+
+          const newApp = {
+            Name:name,
+            PhoneNum:phoneNum,
+            City:city,
+            HelpType:selectedDivs
+          }
+
+          console.log(newApp);
+          return false;
+        })
+
+        function toggleDivBorder() {
+          var id = this.id;
+          if (selectedDivs[id]) {
+            delete selectedDivs[id];
+          } else {
+            selectedDivs[id] = true;
+          }
+          this.classList.toggle('selected');
+          console.log(selectedDivs);
         }
+
+        var divs = document.querySelectorAll('.selectType');
+        divs.forEach(function (div) {
+          div.addEventListener('click', toggleDivBorder);
+        });
+
+      });
+
+      //audio for input fields
+      window.onload = function () {
+        // const nameInput = document.getElementById("nameInput");
+        // const phoneInput = document.getElementById("phoneInput");
+        // const cityInput = document.getElementById("cityInput");
+        // const nameAudio = document.getElementById("nameAudio");
+        // const phoneAudio = document.getElementById("phoneAudio");
+        // const cityAudio = document.getElementById("cityAudio");
+
+        // nameInput.addEventListener("click", function () {
+        //     nameAudio.play();
+        // });
+        // phoneInput.addEventListener("click", function () {
+        //     phoneAudio.play();
+        // });
+        // cityInput.addEventListener("click", function () {
+        //     cityAudio.play();
+        // });
+      }
+
     </script>
 </head>
 <body>
     <div class="container contact-form">
-        <form method="post">
+        <form id="helpRequest">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
@@ -125,40 +173,40 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://static.vecteezy.com/system/resources/thumbnails/002/586/394/small/shirt-clothes-line-style-icon-free-vector.jpg" />
+                                    <div id="clothes" class="selectType">
+                                        <img src="/images/clothes icon.png" />
                                         <p>ביגוד</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://uxwing.com/wp-content/themes/uxwing/download/food-and-drinks/meal-food-icon.png" />
+                                    <div id="food" class="selectType">
+                                        <img src="/images/food icon.webp" />
                                         <p>מזון</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://as2.ftcdn.net/v2/jpg/02/15/13/07/1000_F_215130736_wjt8PiVDtS1h7q2y31uWPIowmOoLYRvK.jpg" />
+                                    <div id="nursing" class="selectType">
+                                        <img src="/images/nursing icon.png" />
                                         <p>סיעוד</p>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://cdn2.iconfinder.com/data/icons/volunteering-innovicons-black-and-white/128/elderly_woman-help-support-male-512.png" />
+                                    <div id="support" class="selectType">
+                                        <img src="/images/support icon.webp" />
                                         <p>תמיכה</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://www.pngfind.com/pngs/m/539-5397925_training-advice-icons-hd-png-download.png" />
+                                    <div id="consultation" class="selectType">
+                                        <img src="/images/consultation icon.png" />
                                         <p>ייעוץ</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div class="selectType">
-                                        <img src="https://thumbs.dreamstime.com/b/home-elderly-black-vector-icon-home-elderly-seniors-house-vector-icon-black-silhouette-white-background-180143750.jpg" />
+                                    <div id="dayCare" class="selectType">
+                                        <img src="/images/day care icon.png" />
                                         <p>מרכזי יום</p>
                                     </div>
                                 </td>
@@ -171,19 +219,19 @@
                     <div class="form-group">
                         <input id="nameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
                         <audio id="nameAudio">
-                            <source src="" type="audio/mp4" />
+                            <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>
                     <div class="form-group">
                         <input id="phoneInput" type="text" name="txtEmail" class="form-control" placeholder="* מספר טלפון" value="" />
                         <audio id="nameAudio">
-                            <source src="" type="audio/mp4" />
+                            <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>
                     <div class="form-group">
                         <input id="cityInput" type="text" name="txtPhone" class="form-control" placeholder="* עיר מגורים" value="" />
                         <audio id="nameAudio">
-                            <source src="" type="audio/mp4" />
+                            <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>
                     <div class="form-group">
