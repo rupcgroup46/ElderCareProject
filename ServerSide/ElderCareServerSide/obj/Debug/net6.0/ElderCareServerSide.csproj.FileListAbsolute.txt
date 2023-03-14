@@ -1,0 +1,7 @@
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.csproj.AssemblyReference.cache
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.AssemblyInfoInputs.cache
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.AssemblyInfo.cs
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.csproj.CoreCompileInputs.cache
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Daniel Davidovich\source\repos\ElderCareServerSide\ElderCareServerSide\obj\Debug\net6.0\ElderCareServerSide.MvcApplicationPartsAssemblyInfo.cache
