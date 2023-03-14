@@ -121,6 +121,11 @@
           return false;
         })
 
+        var divs = document.querySelectorAll('.selectType');
+        divs.forEach(function (div) {
+          div.addEventListener('click', toggleDivBorder);
+        });
+
         function toggleDivBorder() {
           var id = this.id;
           if (selectedDivs[id]) {
@@ -131,11 +136,6 @@
           this.classList.toggle('selected');
           console.log(selectedDivs);
         }
-
-        var divs = document.querySelectorAll('.selectType');
-        divs.forEach(function (div) {
-          div.addEventListener('click', toggleDivBorder);
-        });
 
       });
 
