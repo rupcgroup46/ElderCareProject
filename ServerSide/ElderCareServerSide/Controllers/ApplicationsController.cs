@@ -7,49 +7,40 @@ namespace ElderCareServerSide.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class EldersController : ControllerBase
+    public class ApplicationsController : ControllerBase
     {
-        // GET: api/<EldersController>
+        // GET: api/<ApplicationsController>
         [HttpGet]
-        public IEnumerable<Elder> Get()
+        public IEnumerable<string> Get()
         {
-            return Elder.Read();
+            return new string[] { "value1", "value2" };
         }
 
-        // GET api/<EldersController>/5
+        // GET api/<ApplicationsController>/5
         [HttpGet("{id}")]
         public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/<EldersController>
+        // POST api/<ApplicationsController>
         [HttpPost]
-        public IActionResult Post([FromBody] Elder elder)
+        public IActionResult Post([FromBody] Application application)
         {
-            int numEffected = elder.Insert();
+            int numEffected = application.Insert();
             if (numEffected == 1)
-                return Ok(elder);
+                return Ok(application);
             else
                 return NotFound();
         }
 
-
-        // POST api/<EldersController>
-        //[HttpPost]
-        //public list<object> get(int id)
-        //{
-        //    test = new Elder();
-        //    return test.getElderList(id)
-        //}
-
-        // PUT api/<EldersController>/5
+        // PUT api/<ApplicationsController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/<EldersController>/5
+        // DELETE api/<ApplicationsController>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
