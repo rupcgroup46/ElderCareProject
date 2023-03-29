@@ -99,45 +99,160 @@
     </style>
     <script>
 
-      var selectedDivs = {};
+      var selectedDivs = []; //array of helptypes 
+      var nextElderID = 0; //Elders' ID counter
 
-      //form submit
       $(document).ready(function() {
 
+        //Get elders data from the server
+        fetch('https://localhost:7241/api/Elders', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+            .then(response => response.json())
+            .then(data => {
+              nextElderID = data[data.length-1].id; //generate next elder ID
+              console.log("next elder id: ",nextElderID+1); //DELETE LATER!!!!
+            })
+            .catch(error => console.error(error));
+        
+        //display or not the helper's fields    
+        document.getElementById("helperCheck").addEventListener("click", checkClickFunc);
+        function checkClickFunc() {
+          if (document.getElementById("helperCheck").checked == true)
+            document.getElementById("extraDetails").style.display="block";
+          else
+            document.getElementById("extraDetails").style.display="none";
+        }
+  
         //form submit
         $("#helpRequest").submit(function(){
+
+          //setup fields
           const name = $("#nameInput").val();
           const phoneNum = $("#phoneInput").val();
           const city = $("#cityInput").val();
+          var relativeName = $("#relativeNameInput").val();
+          if (relativeName == "") {
+            relativeName = "null";
+          }
+          var relativeNum = $("#relativeNumInput").val();
+          if (relativeNum == "") {  
+            relativeNum = "null";
+          }
+          var today = new Date();
+          var helpTypesStr = selectedDivs.join(",");
 
-          const newApp = {
+          //Create new elder object
+          var newElder = {
             Name:name,
             PhoneNum:phoneNum,
             City:city,
-            HelpType:selectedDivs
+            HelpTypes:helpTypesStr,
+            RelativeName:relativeName,
+            RelativeNum:relativeNum
+          }
+          console.log("New Elder: ",newElder);
+
+          //POST the new elder object
+          fetch('https://localhost:7241/api/Elders', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(newElder)
+          })
+            .then(response => response.json())
+            .then(data => console.log("Elder Was Added: ",data))
+            .catch(error => console.error("Error: ",error));
+         
+          //each selected help type opens a new application and searches for relevant associations
+          for (let i = 0; i < selectedDivs.length; i++) {
+
+            var chosenAssociations = [];
+            var chosenAssociationsStr = "";
+
+            //GET associations
+            fetch(`https://localhost:7241/api/Associations/helpType/${selectedDivs[i]}/city/${city}`, {
+              method: 'GET',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+            })
+              .then(response => response.json())
+              .then(associations => {
+                console.log("all relevant associations: ", associations);
+                associations.sort((a, b) => a.helpingRatio - b.helpingRatio); //sort the array by their helping ratio
+                console.log("sorted relevant associations: ", associations);
+                if (associations.length < 5) {
+                  for (let i = 0; i < associations.length; i++) {
+                    chosenAssociations.push(associations[i]);
+                  }
+                } else {
+                  for (let i = 0; i < 5; i++) {
+                    chosenAssociations.push(associations[i]);
+                  }
+                }
+                console.log("chosen: ", chosenAssociations);
+                chosenAssociationsStr = chosenAssociations.map(item => item.id).join(',');
+
+                return chosenAssociationsStr;
+              })
+              .then(chosenAssociationsStr => {
+                
+                //Create new application object
+                var newApplication = {
+                  Status: "null",
+                  HelpType: selectedDivs[i],
+                  City: city,
+                  StartDate: today,
+                  UpdateDate: new Date(null),
+                  EndDate: new Date(null),
+                  ElderID: nextElderID+1,
+                  HandlingAssociationID: 0,
+                  SentAssociationsID: chosenAssociationsStr
+                }
+                console.log("New Application: ", newApplication);
+
+                //POST new application object
+                return fetch('https://localhost:7241/api/Applications', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify(newApplication)
+                })
+              })
+              .then(response => response.json())
+              .then(data => console.log("Application Was Added: ", data))
+              .catch(error => console.error(error));
           }
 
-          console.log(newApp);
           return false;
         })
 
+        //allows multiple selection of help types
         var divs = document.querySelectorAll('.selectType');
         divs.forEach(function (div) {
           div.addEventListener('click', toggleDivBorder);
         });
-
         function toggleDivBorder() {
           var id = this.id;
-          if (selectedDivs[id]) {
-            delete selectedDivs[id];
+          var index = selectedDivs.indexOf(id);
+          if (index !== -1) {
+            selectedDivs.splice(index, 1);
           } else {
-            selectedDivs[id] = true;
+            selectedDivs.push(id);
           }
           this.classList.toggle('selected');
           console.log(selectedDivs);
         }
 
       });
+
+
 
       //audio for input fields
       window.onload = function () {
@@ -173,40 +288,40 @@
                             </tr>
                             <tr>
                                 <td>
-                                    <div id="clothes" class="selectType">
-                                        <img src="/images/clothes icon.png" />
+                                    <div id="ביגוד" class="selectType">
+                                        <img src="/ClientSide/images/clothes icon.png" />
                                         <p>ביגוד</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div id="food" class="selectType">
-                                        <img src="/images/food icon.webp" />
+                                    <div id="מזון" class="selectType">
+                                        <img src="/ClientSide/images/food icon.webp" />
                                         <p>מזון</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div id="nursing" class="selectType">
-                                        <img src="/images/nursing icon.png" />
+                                    <div id="סיעוד" class="selectType">
+                                        <img src="/ClientSide/images/nursing icon.png" />
                                         <p>סיעוד</p>
                                     </div>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <div id="support" class="selectType">
-                                        <img src="/images/support icon.webp" />
+                                    <div id="תמיכה" class="selectType">
+                                        <img src="/ClientSide/images/support icon.webp" />
                                         <p>תמיכה</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div id="consultation" class="selectType">
-                                        <img src="/images/consultation icon.png" />
+                                    <div id="ייעוץ" class="selectType">
+                                        <img src="/ClientSide/images/consultation icon.png" />
                                         <p>ייעוץ</p>
                                     </div>
                                 </td>
                                 <td>
-                                    <div id="dayCare" class="selectType">
-                                        <img src="/images/day care icon.png" />
+                                    <div id="מרכז יום" class="selectType">
+                                        <img src="/ClientSide/images/day care icon.png" />
                                         <p>מרכזי יום</p>
                                     </div>
                                 </td>
@@ -234,11 +349,21 @@
                             <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>
-                    <div class="form-group">
-                        <input type="submit" name="btnSubmit" class="btnContact" value="שלח פנייה" />
+                    <div class="form-group" style="display: flex;justify-content: center; align-content: center;">
+                      <p style="margin-right:10px;margin-top:12px;">איני מבקש הסיוע</p>
+                      <input id="helperCheck" type="checkbox" name="checkboxRelative">
+                    </div>
+                    <div id="extraDetails" style="display:none;">
+                      <p>:אנא מלא בנוסף את פרטיך</p>
+                      <div class="form-group">
+                        <input id="relativeNameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
+                      </div>
+                      <div class="form-group">
+                        <input id="relativeNumInput" type="text" name="txtEmail" class="form-control" placeholder="* מספר טלפון" value="" />
+                      </div>
                     </div>
                     <div class="form-group">
-                        <p>איני מבקש הסיוע</p><input type="checkbox" name="checkboxRelative" />
+                      <input type="submit" name="btnSubmit" class="btnContact" value="שלח פנייה" />
                     </div>
                 </div>
             </div>
