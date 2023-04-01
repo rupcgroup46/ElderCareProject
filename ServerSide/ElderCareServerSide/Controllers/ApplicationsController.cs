@@ -16,6 +16,34 @@ namespace ElderCareServerSide.Controllers
             return new string[] { "value1", "value2" };
         }
 
+        [HttpGet("all")]
+        public Object getAll()
+        {
+            Application a = new Application();
+            return a.getAllApps();
+        }
+
+        [HttpGet("new")]
+        public Object getNew()
+        {
+            Application a = new Application();
+            return a.getNewApps();
+        }
+
+        [HttpGet("closed")]
+        public Object getClosed()
+        {
+            Application a = new Application();
+            return a.getClosedApps();
+        }
+
+        [HttpGet("denied")]
+        public Object getDenied()
+        {
+            Application a = new Application();
+            return a.getDeniedApps();
+        }
+
         // GET api/<ApplicationsController>/5
         [HttpGet("{id}")]
         public string Get(int id)

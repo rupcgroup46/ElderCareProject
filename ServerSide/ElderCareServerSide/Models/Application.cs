@@ -18,5 +18,29 @@
             DBservices dbs = new DBservices();
             return dbs.InsertApplication(this);
         }
+
+        public Object getAllApps()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetApps();
+        }
+
+        public Object getNewApps()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetNewApps();
+        }
+
+        public Object getClosedApps()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetClosedApps();
+        }
+
+        public Object getDeniedApps()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetDeniedApps();
+        }
     }
 }

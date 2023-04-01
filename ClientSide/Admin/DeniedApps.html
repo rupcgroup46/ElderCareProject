@@ -8,11 +8,6 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable();
-        });
-    </script>
     <style>
         th.sorting {
             border-left: solid black 1px;
@@ -63,6 +58,55 @@
             margin: 0 10px;
         }
     </style>
+    <script>
+      $(document).ready(function () {
+
+        //Get All Applications data from the server
+        fetch('https://localhost:7241/api/Applications/denied', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("denied applications: ", data);
+            applications = data;
+            try {
+              table = $("#appsTable").dataTable({
+                data: data,
+                pageLength: 10,
+                columns: [
+                  { data: "reason" },
+                  { data: "associationName" },
+                  {
+                    data: "endDate",
+                    render: function (data, type, row, meta) {
+                      return row.endDate.slice(0, 10);
+                    }
+                  },
+                  { data: "status" },
+                  { data: "helpType" },
+                  { data: "city" },
+                  { data: "phoneNum" },
+                  { data: "name" },
+                  {
+                    data: "startDate",
+                    render: function (data, type, row, meta) {
+                      return row.startDate.slice(0, 10);
+                    }
+                  },
+                  { data: "id" }
+                ],
+              });
+            }
+            catch (err) {
+              alert(err);
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    </script>
 </head>
 <body>
     <ul>
@@ -84,71 +128,21 @@
             </select>
         </div>
     </div>
-    <table id="myTable" class="display" style="width:100%">
+    <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>סיבת סירוב</th>
-                <th>סטטוס</th>
                 <th>עמותה</th>
-                <th>תאריך עדכון סטטוס</th>
+                <th>תאריך סיום טיפול</th>
+                <th>סטטוס</th>
                 <th>סוג הסיוע</th>
-                <th>איזור מגורים</th>
+                <th>אזור מגורים</th>
                 <th>מספר טלפון</th>
                 <th>מבקש הסיוע</th>
                 <th>תאריך הפנייה</th>
                 <th></th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>לא עומד בקריטריונים</td>
-                <td>אי התאמה</td>
-                <td>לתת</td>
-                <td>16/01/2023</td>
-                <td>תמיכה</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>לא הצלחנו לסייע</td>
-                <td>אי התאמה</td>
-                <td>לתת</td>
-                <td>16/01/2023</td>
-                <td>תמיכה</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>-</td>
-                <td>לא נמצאה עמותה</td>
-                <td>-</td>
-                <td>16/01/2023</td>
-                <td>תמיכה</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>לא עומד בקריטריונים</td>
-                <td>אי התאמה</td>
-                <td>לתת</td>
-                <td>16/01/2023</td>
-                <td>תמיכה</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>4</td>
-            </tr>
-        </tbody>
     </table>
 </body>
 </html>

@@ -12,11 +12,17 @@ namespace ElderCareServerSide.Controllers
     {
         // GET: api/<AssociationsController>
         [HttpGet]
-        //public IEnumerable<Association> Get()
-        //{
-        //    return Association.ReadAll();
-        //}
+        public IEnumerable<Association> Get()
+        {
+            return Association.ReadAll();
+        }
 
+        // GET: api/<AssociationsController>
+        [HttpGet("cities")]
+        public IEnumerable<string> GetCities()
+        {
+            return Association.ReadCities();
+        }
 
         // GET api/<AssociationsController>/5
         [HttpGet("helpType/{helpType}/city/{city}")]
