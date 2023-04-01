@@ -12,16 +12,22 @@
         public int HelpedApps { get; set; } //default null
         public double HelpingRatio { get; set; } //default null
 
-        //public static List<Association> ReadAll()
-        //{
-        //    DBservices dbs = new DBservices();
-        //    return dbs.ReadAssociations();
-        //}
+        public static List<Association> ReadAll()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadAssociations();
+        }
 
         public static List<Association> ReadByParameters(string helpType, string city)
         {
             DBservices dbs = new DBservices();
             return dbs.ReadAssociationsByParameters(helpType, city);
+        }
+
+        public static List<string> ReadCities()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadAllCities();
         }
     }
 }

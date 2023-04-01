@@ -104,6 +104,23 @@
 
       $(document).ready(function() {
 
+        //Get cities list from the server
+        fetch('https://localhost:7241/api/Associations/cities', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+            .then(response => response.json())
+            .then(data => {
+              document.getElementById("cities").innerHTML = "";
+              for (let i = 0; i < data.length; i++) {
+                str = "<option value='"+data[i]+"'>"
+                document.getElementById("cities").innerHTML += str;
+              }
+            })
+            .catch(error => console.error(error));
+
         //Get elders data from the server
         fetch('https://localhost:7241/api/Elders', {
             method: 'GET',
@@ -114,7 +131,6 @@
             .then(response => response.json())
             .then(data => {
               nextElderID = data[data.length-1].id; //generate next elder ID
-              console.log("next elder id: ",nextElderID+1); //DELETE LATER!!!!
             })
             .catch(error => console.error(error));
         
@@ -171,7 +187,7 @@
           //each selected help type opens a new application and searches for relevant associations
           for (let i = 0; i < selectedDivs.length; i++) {
 
-            var chosenAssociations = [];
+            let chosenAssociations = [];
             var chosenAssociationsStr = "";
 
             //GET associations
@@ -201,10 +217,15 @@
                 return chosenAssociationsStr;
               })
               .then(chosenAssociationsStr => {
+
+                let status = "null";
+                if (chosenAssociationsStr == ""){
+                  status = "לא נמצאה עמותה";
+                }
                 
                 //Create new application object
                 var newApplication = {
-                  Status: "null",
+                  Status: status,
                   HelpType: selectedDivs[i],
                   City: city,
                   StartDate: today,
@@ -339,13 +360,15 @@
                     </div>
                     <div class="form-group">
                         <input id="phoneInput" type="text" name="txtEmail" class="form-control" placeholder="* מספר טלפון" value="" />
-                        <audio id="nameAudio">
+                        <audio id="phoneAudio">
                             <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>
                     <div class="form-group">
-                        <input id="cityInput" type="text" name="txtPhone" class="form-control" placeholder="* עיר מגורים" value="" />
-                        <audio id="nameAudio">
+                        <input id="cityInput" type="text" list="cities" name="txtPhone" class="form-control" placeholder="* עיר מגורים" value="" />
+                        <datalist id="cities">
+                       </datalist>
+                        <audio id="cityAudio">
                             <source src="" type="audio/mp4" /> <!--Add audio-->
                         </audio>
                     </div>

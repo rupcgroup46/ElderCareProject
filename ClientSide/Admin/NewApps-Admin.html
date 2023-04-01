@@ -10,8 +10,72 @@
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#myTable').DataTable();
+
+          //Get New Applications data from the server
+          fetch('https://localhost:7241/api/Applications/new', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+            .then(response => response.json())
+            .then(data => {
+              console.log("new applications: ", data);
+              applications = data;
+              try {
+                table = $("#appsTable").dataTable({
+                  data: data,
+                  pageLength: 10,
+                  columns: [
+                    {
+                      data: "id",
+                      render: function (data, type, row, meta) {
+                        return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
+                      }
+                    },
+                    {
+                       data: "relativeNum",
+                      render: function (data, type, row, meta) {
+                        if (row.relativeNum == "null") {
+                          return "-";
+                        }
+                        else {
+                          return row.relativeNum
+                        }
+                      }
+                    },
+                    {
+                       data: "relativeName",
+                      render: function (data, type, row, meta) {
+                        if (row.relativeName == "null") {
+                          return "-";
+                        }
+                        else {
+                          return row.relativeName
+                        }
+                      } 
+                    },
+                    { data: "helpType" },
+                    { data: "city" },
+                    { data: "phoneNum" },
+                    { data: "name" },
+                    {
+                      data: "startDate",
+                      render: function (data, type, row, meta) {
+                        return row.startDate.slice(0, 10);
+                      }
+                    },
+                    { data: "id" }
+                  ],
+                });
+              }
+              catch (err) {
+                alert(err);
+              }
+            })
+            .catch(error => console.error(error));
         });
+
     </script>
     <style>
         th.sorting {
@@ -78,83 +142,20 @@
     <div>
         <h2>פניות חדשות</h2>
     </div>
-    <table id="myTable" class="display" style="width:100%">
+    <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>אימות</th>
-                <th>לפנות למבקש הסיוע/מגיש הבקשה</th>
+                <th>פרטים נוספים</th>
                 <th>טלפון מגיש הבקשה</th>
                 <th>מגיש הבקשה</th>
                 <th>סוג הסיוע</th>
-                <th>איזור מגורים</th>
+                <th>אזור מגורים</th>
                 <th>מספר טלפון</th>
                 <th>מבקש הסיוע</th>
                 <th>תאריך הפנייה</th>
-                <th></th>
+                <th>מספר הפנייה</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td><button class="red">דחייה</button><button class="green">אימות</button></td>
-                <td>מבקש הסיוע</td>
-                <td>050-0000000</td>
-                <td>אלי ישראלי</td>
-                <td>תמיכה</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td><button class="red">דחייה</button><button class="green">אימות</button></td>
-                <td>מבקש הסיוע</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>הרצליה</td>
-                <td>050-0000000</td>
-                <td>שרה לוי</td>
-                <td>16/01/2023</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td><button class="red">דחייה</button><button class="green">אימות</button></td>
-                <td>מבקש הסיוע</td>
-                <td>-</td>
-                <td>-</td>
-                <td>מזון</td>
-                <td>באר שבע</td>
-                <td>050-0000000</td>
-                <td>חיים כהן</td>
-                <td>01/01/2023</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td><button class="red">דחייה</button><button class="green">אימות</button></td>
-                <td>מגיש הבקשה</td>
-                <td>057-4444444</td>
-                <td>שמעון יום-טוב</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>יהושע לוי</td>
-                <td>14/01/2023</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td><button class="red">דחייה</button><button class="green">אימות</button></td>
-                <td>מבקש הסיוע</td>
-                <td>-</td>
-                <td>-</td>
-                <td>מרכז יום</td>
-                <td>נס ציונה</td>
-                <td>050-0000000</td>
-                <td>אבנר דוד</td>
-                <td>15/01/2023</td>
-                <td>5</td>
-            </tr>
-        </tbody>
-    </table>
+      </table>
 </body>
 </html>

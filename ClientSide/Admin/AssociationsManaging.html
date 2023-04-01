@@ -10,7 +10,7 @@
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('#myTable').DataTable();
+            
         });
     </script>
     <style>
@@ -65,6 +65,68 @@
             margin: 0 10px;
         }
     </style>
+    <script>
+      $(document).ready(function () {
+
+        //Get Associations data from the server
+        fetch('https://localhost:7241/api/Associations', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("all associations: ", data);
+            associations = data;
+            try {
+              table = $("#associationsTable").dataTable({
+                data: data,
+                pageLength: 10,
+                columns: [
+                  {
+                    data: "email",
+                    render: function (data, type, row, meta) {
+                      return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
+                    }
+                  },
+                  { data: "helpingRatio" },
+                  { data: "helpedApps" },
+                  { data: "totalApps" },
+                  { data: "city" },
+                  { data: "helpType" },
+                  { data: "name" },
+                  { data: "id" }
+                ],
+              });
+            }
+            catch (err) {
+              alert(err);
+            }
+          })
+          .catch(error => console.error(error));
+
+
+        //Get cities list from the server
+        fetch('https://localhost:7241/api/Associations/cities', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            document.getElementById("cities").innerHTML = "";
+            for (let i = 0; i < data.length; i++) {
+              str = "<option value='" + data[i] + "'>"
+              document.getElementById("cities").innerHTML += str;
+            }
+          })
+          .catch(error => console.error(error));
+
+          
+        });
+    </script>
 </head>
 <body>
     <ul>
@@ -77,127 +139,36 @@
     <div>
         <h2>ניהול עמותות</h2>
         <div class="inputs">
-            <select class="select-box" name="helpType" id="helpType">
-                <option value="הכל">כל התחומים</option>
-                <option value="מזון">מזון</option>
-                <option value="ביגוד">ביגוד</option>
-                <option value="מרכזי יום">מרכזי יום</option>
-                <option value="תמיכה">תמיכה</option>
+            <input id="helpTypeInput" type="text" list="helpTypes" class="form-control" placeholder="תחום סיוע" value="" />
+                        <datalist id="helpTypes">
+                          <option value="">כל התחומים</option>
+                          <option value="מזון">מזון</option>
+                          <option value="ביגוד">ביגוד</option>
+                          <option value="מרכז יום">מרכז יום</option>
+                          <option value="סיעוד">סיעוד</option>
+                          <option value="ייעוץ">ייעוץ</option>
+                          <option value="תמיכה">תמיכה</option>
+                       </datalist>
             </select>
-            <select class="select-box" name="cities" id="cities">
-                <option value="הכל">כל הערים</option>
-                <option value="תל אביב">תל אביב</option>
-                <option value="ירושלים">ירושלים</option>
-                <option value="חיפה">חיפה</option>
-                <option value="באר שבע">באר שבע</option>
+            <input id="cityInput" type="text" list="cities" class="form-control" placeholder="אזור פעילות" value="" />
+                        <datalist id="cities">
+                       </datalist>
             </select>
         </div>
     </div>
-    <table id="myTable" class="display" style="width:100%">
+    <table id="associationsTable" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>פרטים נוספים</th>
                 <th>אחוז הצלחה</th>
                 <th>פניות שטופלו</th>
                 <th>פניות שהועברו</th>
-                <th>איזור פעילות</th>
+                <th>אזור פעילות</th>
                 <th>תחום סיוע</th>
                 <th>שם העמותה</th>
                 <th>מספר עמותה</th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>66.6%</td>
-                <td>666</td>
-                <td>1000</td>
-                <td>תל אביב</td>
-                <td>תמיכה</td>
-                <td>לתת</td>
-                <td>1111111111</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>0%</td>
-                <td>0</td>
-                <td>55</td>
-                <td>יריחו</td>
-                <td>מזון</td>
-                <td>ביחד</td>
-                <td>2222222222</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>25%</td>
-                <td>20</td>
-                <td>80</td>
-                <td>תל אביב</td>
-                <td>מזון</td>
-                <td>אגודה למען הקשיש-ת"א</td>
-                <td>3333333333</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>1%</td>
-                <td>1</td>
-                <td>100</td>
-                <td>באר שבע</td>
-                <td>מזון</td>
-                <td>האגודה למען הקשיש-ב"ש</td>
-                <td>4444444444</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>0%</td>
-                <td>0</td>
-                <td>0</td>
-                <td>קריית שמונה</td>
-                <td>מרכזי יום</td>
-                <td>האגודה למען הקשיש-ק"ש</td>
-                <td>5555555555</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>50%</td>
-                <td>10</td>
-                <td>20</td>
-                <td>קריית מוצקין</td>
-                <td>מזון</td>
-                <td>של"ח</td>
-                <td>6666666666</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>100%</td>
-                <td>1000</td>
-                <td>1000</td>
-                <td>נתניה</td>
-                <td>תמיכה</td>
-                <td>האגודה למען הקשיש-נתניה</td>
-                <td>7777777777</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>33.3%</td>
-                <td>111</td>
-                <td>333</td>
-                <td>חיפה</td>
-                <td>ביגוד</td>
-                <td>האגודה למען הקשיש-חיפה</td>
-                <td>8888888888</td>
-            </tr>
-            <tr>
-                <td><button>מחיקה</button><button>פרטי התקשרות</button></td>
-                <td>75%</td>
-                <td>150</td>
-                <td>200</td>
-                <td>ירושלים</td>
-                <td>ייעוץ</td>
-                <td>האגודה למען הקשיש-י"ם</td>
-                <td>9999999999</td>
-            </tr>
-        </tbody>
     </table>
 </body>
 </html>
