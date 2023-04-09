@@ -25,6 +25,42 @@ namespace ElderCareServerSide.Controllers
         }
 
         // GET api/<AssociationsController>/5
+        [HttpGet("new/{id}")]
+        public Object Get(string id)
+        {
+            Association a = new Association();
+            return a.GetNewApps(id);
+        }
+
+        // GET api/<AssociationsController>/5
+        [HttpGet("all/{id}")]
+        public Object GetAll(string id)
+        {
+            Association a = new Association();
+            return a.GetAllApps(id);
+        }
+
+        // GET api/<AssociationsController>/5
+        [HttpGet("closed/{id}")]
+        public Object GetClosed(string id)
+        {
+            Association a = new Association();
+            return a.GetClosedApps(id);
+        }
+
+        //GET api/<AssociationsController>/5
+        [HttpGet("email/{email}/password/{password}")]
+        public IActionResult Get(string email, string password)
+        {
+            Association association = new Association();
+            association = Association.Login(email, password);
+            if (association != null)
+                return Ok(association);
+            else
+                return NotFound();
+        }
+
+        // GET api/<AssociationsController>/5
         [HttpGet("helpType/{helpType}/city/{city}")]
         public List<Association> GetByParameters(string helpType, string city)
         {

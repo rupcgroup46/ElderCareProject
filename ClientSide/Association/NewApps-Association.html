@@ -8,11 +8,6 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            $('#myTable').DataTable();
-        });
-    </script>
     <style>
         th.sorting {
             border-left: solid black 1px;
@@ -57,6 +52,93 @@
                     background-color: #2196f38f;
                 }
     </style>
+    <script>
+      $(document).ready(function () {
+
+        //Get New Applications data from the server
+        fetch(`https://localhost:7241/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("new applications: ", data);
+            applications = data;
+            try {
+              table = $("#appsTable").dataTable({
+                data: data,
+                pageLength: 10,
+                columns: [
+                  {
+                    data: "id",
+                    render: function (data, type, row, meta) {
+                      str = '<input id="'+row.id+'" list="status" />';
+                      str += '<datalist id="status">';
+                      str += '<option value="נוצר קשר">';
+                      str += '<option value="אין מענה">';
+                      str += '<option value="תחילת הליך טיפול">';
+                      str += '<option value="טופל">';
+                      str += '<option value="אי התאמה">';
+                      str += '</datalist>';
+                      return str; //ADD PUT
+                    }
+                  },
+                  {
+                    data: "relativeNum",
+                    render: function (data, type, row, meta) {
+                      if (row.relativeNum == "null") {
+                        return "-";
+                      }
+                      else {
+                        return row.relativeNum
+                      }
+                    }
+                  },
+                  {
+                    data: "relativeName",
+                    render: function (data, type, row, meta) {
+                      if (row.relativeName == "null") {
+                        return "-";
+                      }
+                      else {
+                        return row.relativeName
+                      }
+                    }
+                  },
+                  { data: "helpType" },
+                  { data: "city" },
+                  { data: "phoneNum" },
+                  { data: "name" },
+                  {
+                    data: "startDate",
+                    render: function (data, type, row, meta) {
+                      return row.startDate.slice(0, 10);
+                    }
+                  },
+                  { data: "id" }
+                ],
+              });
+            }
+            catch (err) {
+              alert(err);
+            }
+          })
+          .catch(error => console.error(error));
+
+        //changing status of an application
+        document.getElementById('appsTable').addEventListener('input', function (event) {
+          if (event.target && event.target.nodeName === 'INPUT') {
+            const rowId = event.target.closest('[id]').id;
+            const selectElem = event.target.closest('tr').querySelector('select');
+            const selectedIndex = selectElem.selectedIndex;
+            const optionValue = selectElem.options[selectedIndex].value;
+            console.log(`Changed input in row with id: ${rowId}, new option value is: ${optionValue}`);
+          }
+        });
+      });
+    </script>
 </head>
 <body>
     <ul>
@@ -67,233 +149,20 @@
     <div>
         <h2>פניות חדשות</h2>
     </div>
-    <table id="myTable" class="display" style="width:100%">
+    <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>
                 <th>סטטוס</th>
-                <th>לפנות למבקש הסיוע/מגיש הבקשה</th>
                 <th>טלפון מגיש הבקשה</th>
                 <th>מגיש הבקשה</th>
                 <th>סוג הסיוע</th>
-                <th>איזור מגורים</th>
+                <th>אזור מגורים</th>
                 <th>מספר טלפון</th>
                 <th>מבקש הסיוע</th>
                 <th>תאריך הפנייה</th>
                 <th></th>
             </tr>
         </thead>
-        <tbody>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מבקש הסיוע</td>
-                <td>050-0000000</td>
-                <td>אלי ישראלי</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ישראל ישראלי</td>
-                <td>16/01/2023</td>
-                <td>1</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מבקש הסיוע</td>
-                <td>050-0000000</td>
-                <td>יוסי כהן</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>052-2222222</td>
-                <td>בני אברהם</td>
-                <td>16/01/2023</td>
-                <td>2</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>054-4444444</td>
-                <td>יהושע לוי</td>
-                <td>16/01/2023</td>
-                <td>3</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>054-4444444</td>
-                <td>אבנר דוד</td>
-                <td>16/01/2023</td>
-                <td>4</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>057-4444444</td>
-                <td>שמעון יום-טוב</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>054-4444444</td>
-                <td>עליזה יום-טוב</td>
-                <td>16/01/2023</td>
-                <td>5</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>054-4444444</td>
-                <td>גילה בת-שבע</td>
-                <td>16/01/2023</td>
-                <td>6</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מבקש הסיוע</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>ברכה נחומוב</td>
-                <td>16/01/2023</td>
-                <td>7</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>050-0000000</td>
-                <td>בני כהן</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>מנחם סוקולוב</td>
-                <td>16/01/2023</td>
-                <td>8</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מגיש הבקשה</td>
-                <td>050-0000000</td>
-                <td>אבי רפאלי</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>שמעון רפאלי</td>
-                <td>16/01/2023</td>
-                <td>9</td>
-            </tr>
-            <tr>
-                <td>
-                    <input list="status" />
-                    <datalist id="status">
-                        <option value="נוצר קשר">
-                        <option value="אין מענה">
-                        <option value="תחילת הליך טיפול">
-                        <option value="טופל">
-                        <option value="אי התאמה">
-                    </datalist>
-                </td>
-                <td>מבקש הסיוע</td>
-                <td>-</td>
-                <td>-</td>
-                <td>ביגוד</td>
-                <td>תל אביב</td>
-                <td>050-0000000</td>
-                <td>אברהם סעדון</td>
-                <td>16/01/2023</td>
-                <td>10</td>
-            </tr>
-        </tbody>
     </table>
 </body>
 </html>
