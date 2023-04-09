@@ -43,7 +43,6 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method inserts an elder to the elders table 
     //--------------------------------------------------------------------------------------------------
-
     public int InsertElder(Elder elder)
     {
 
@@ -148,7 +147,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method reads all the elders
+    // This method reads all cities
     //--------------------------------------------------------------------------------------------------
     public List<string> ReadAllCities()
     {
@@ -513,7 +512,7 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
-    // This method reads 5 associations
+    // This method reads relevant associations
     //--------------------------------------------------------------------------------------------------
     public List<Association> ReadAssociationsByParameters(string helpType, string city)
     {
@@ -575,11 +574,195 @@ public class DBservices
         }
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method reads all new applications by assocation ID
+    //--------------------------------------------------------------------------------------------------
+    public List<Object> GetNewAppsByID(string id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadAppsByIDSP("spReadNewAppsByID", con, id); // create the command
+
+        try
+        {
+            List<Object> newAppsList = new List<Object>();
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                newAppsList.Add(new
+                {
+                    id = Convert.ToInt32(dataReader["ID"].ToString()),
+                    startDate = Convert.ToDateTime(dataReader["StartDate"].ToString()),
+                    name = dataReader["Name"].ToString(),
+                    phoneNum = dataReader["PhoneNum"].ToString(),
+                    city = dataReader["City"].ToString(),
+                    helpType = dataReader["HelpType"].ToString(),
+                    relativeName = dataReader["RelativeName"].ToString(),
+                    relativeNum = dataReader["RelativeNum"].ToString(),
+                    status = dataReader["status"].ToString(),
+                });
+            }
+
+            return newAppsList;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method reads all applications by assocation ID
+    //--------------------------------------------------------------------------------------------------
+    public List<Object> GetAllAppsByID(string id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadAppsByIDSP("spReadAllAppsByID", con, id); // create the command
+
+        try
+        {
+            List<Object> newAppsList = new List<Object>();
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                newAppsList.Add(new
+                {
+                    id = Convert.ToInt32(dataReader["ID"].ToString()),
+                    startDate = Convert.ToDateTime(dataReader["StartDate"].ToString()),
+                    name = dataReader["Name"].ToString(),
+                    phoneNum = dataReader["PhoneNum"].ToString(),
+                    city = dataReader["City"].ToString(),
+                    helpType = dataReader["HelpType"].ToString(),
+                    relativeName = dataReader["RelativeName"].ToString(),
+                    relativeNum = dataReader["RelativeNum"].ToString(),
+                    status = dataReader["status"].ToString(),
+                });
+            }
+
+            return newAppsList;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method reads all closed applications by assocation ID
+    //--------------------------------------------------------------------------------------------------
+    public List<Object> GetClosedAppsByID(string id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadAppsByIDSP("spReadClosedAppsByID", con, id); // create the command
+
+        try
+        {
+            List<Object> closedAppsList = new List<Object>();
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                closedAppsList.Add(new
+                {
+                    id = Convert.ToInt32(dataReader["ID"].ToString()),
+                    startDate = Convert.ToDateTime(dataReader["StartDate"].ToString()),
+                    name = dataReader["Name"].ToString(),
+                    phoneNum = dataReader["PhoneNum"].ToString(),
+                    city = dataReader["City"].ToString(),
+                    helpType = dataReader["HelpType"].ToString(),
+                    status = dataReader["status"].ToString(),
+                    endDate = Convert.ToDateTime(dataReader["EndDate"].ToString()),
+                    days = Convert.ToInt32(dataReader["Days"].ToString()),
+                });
+            }
+
+            return closedAppsList;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
 
     //--------------------------------------------------------------------------------------------------
     // This method inserts an application to the application table 
     //--------------------------------------------------------------------------------------------------
-
     public int InsertApplication(Application application)
     {
 
@@ -625,7 +808,6 @@ public class DBservices
     //---------------------------------------------------------------------------------
     // Create the insert elder command using a stored procedure
     //---------------------------------------------------------------------------------
-
     private SqlCommand CreateInsertElderCommandSP(String spInsertElder, SqlConnection con, Elder elder)
     {
 
@@ -649,11 +831,9 @@ public class DBservices
         return cmd;
     }
 
-
     //---------------------------------------------------------------------------------
     // Create the insert elder command using a stored procedure
     //---------------------------------------------------------------------------------
-
     private SqlCommand CreateReadCommandSP(String storedProcedure, SqlConnection con)
     {
 
@@ -670,11 +850,9 @@ public class DBservices
         return cmd;
     }
 
-
     //---------------------------------------------------------------------------------
     // Create the read associations command using a stored procedure
     //---------------------------------------------------------------------------------
-
     private SqlCommand CreateReadAssociationsByParametersSP(String spReadAssociationsByParameters, SqlConnection con, string helpType, string city)
     {
 
@@ -695,9 +873,29 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
+    // Create the read new applications by ID command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadAppsByIDSP(String spProcedure, SqlConnection con, string id)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
     // Create the insert application command using a stored procedure
     //---------------------------------------------------------------------------------
-
     private SqlCommand CreateInsertApplicationCommandSP(String spInsertApplication, SqlConnection con, Application application)
     {
 
