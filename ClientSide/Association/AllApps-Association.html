@@ -51,12 +51,17 @@
       color: white;
       background-color: #2196f38f;
     }
+
+    li.logOut {
+      float:left;
+      background-color: #80808040;
+    }
   </style>
   <script>
     $(document).ready(function () {
 
       //Get New Applications data from the server
-      fetch(`https://localhost:7241/api/Associations/all/${sessionStorage.getItem("association_id")}`, {
+      fetch(`https://localhost:7241/api/Associations/all/${sessionStorage.association_id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -74,7 +79,12 @@
                 {
                   data: "id",
                   render: function (data, type, row, meta) {
-                    str = '<input id="' + row.id + '" list="status" />';
+                    if (row.status == "null") {
+                        str = '<input id="'+row.id+'" class="myInput" list="status" placeholder="טרם נוצר קשר" />';
+                    }
+                    else {
+                      str = '<input id="' + row.id + '" class="myInput" list="status" placeholder="' + row.status + '" />';
+                    }
                     str += '<datalist id="status">';
                     str += '<option value="נוצר קשר">';
                     str += '<option value="אין מענה">';
@@ -82,7 +92,7 @@
                     str += '<option value="טופל">';
                     str += '<option value="אי התאמה">';
                     str += '</datalist>';
-                    return str; //ADD PUT
+                    return str;
                   }
                 },
                 {
@@ -127,16 +137,55 @@
         })
         .catch(error => console.error(error));
 
-      //changing status of an application
-      document.getElementById('appsTable').addEventListener('input', function (event) {
-        if (event.target && event.target.nodeName === 'INPUT') {
-          const rowId = event.target.closest('[id]').id;
-          const selectElem = event.target.closest('tr').querySelector('select');
-          const selectedIndex = selectElem.selectedIndex;
-          const optionValue = selectElem.options[selectedIndex].value;
-          console.log(`Changed input in row with id: ${rowId}, new option value is: ${optionValue}`);
-        }
-      });
+      //change application's status
+      $('#appsTable').on('change', 'input.myInput', function () {
+        var rowId = $(this).attr('id');
+        console.log("id: ", rowId);
+        var selectedValue = $(this).val();
+        console.log("selected value: ", selectedValue);
+        let tmpApp = {};
+        fetch(`https://localhost:7241/api/Applications/${rowId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            tmpApp = data;
+            return tmpApp;
+          })
+          .then(tmpApp => {
+            console.log("check: ", tmpApp[0]);
+            let endDate = new Date(null);
+            if (selectedValue == "טופל" || selectedValue == "אי התאמה") {
+              endDate = new Date();
+            }
+            updateApp = {
+              ID: rowId,
+              Status: selectedValue,
+              HelpType: tmpApp[0].helpType,
+              City: tmpApp[0].city,
+              StartDate: tmpApp[0].startDate,
+              UpdateDate: new Date(),
+              EndDate: endDate,
+              ElderID: tmpApp[0].elderID,
+              HandlingAssociationID: sessionStorage.association_id,
+              SentAssociationsID: tmpApp[0].sentAssociationsID
+            }
+            console.log("updateApp: ", updateApp)
+            return fetch(`https://localhost:7241/api/Applications`, {
+              method: 'PUT',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify(updateApp)
+            })
+          })
+          .then(response => response.json())
+          .then(data => console.log("Application Was updated: ", data))
+          .catch(error => console.error(error));
+        });
     });
   </script>
 </head>
@@ -146,6 +195,7 @@
     <li><a href="NewApps-Association.html">פניות חדשות</a></li>
     <li><a class="active" href="AllApps-Association.html">כלל הפניות</a></li>
     <li><a href="FinishedApps-Association.html">פניות סגורות</a></li>
+    <li class="logOut"><a href="AssoLogin.html">התנתק</a></li>
   </ul>
   <div>
     <h2>כלל הפניות</h2>

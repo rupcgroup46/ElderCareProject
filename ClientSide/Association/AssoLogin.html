@@ -97,6 +97,11 @@
     </style>
     <script>
       $(document).ready(function() {
+
+        //reset the assocation id
+        sessionStorage.setItem("association_id", 0);
+
+        //association login
         $("#assoLogin").submit(function(){
           const email = $("#emailInput").val();
           const password = $("#passwordInput").val();
@@ -111,6 +116,7 @@
               console.log("Logged in: ",data);
               sessionStorage.setItem("association_id", data.id);
               window.location.href = "NewApps-Association.html";
+              alert("ברוכים השבים!");
             })
             .catch(error => console.error("Error: ",error));
 

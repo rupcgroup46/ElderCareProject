@@ -46,9 +46,9 @@ namespace ElderCareServerSide.Controllers
 
         // GET api/<ApplicationsController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public List<Application> Get(int id)
         {
-            return "value";
+            return Application.Read(id);
         }
 
         // POST api/<ApplicationsController>
@@ -62,10 +62,15 @@ namespace ElderCareServerSide.Controllers
                 return NotFound();
         }
 
-        // PUT api/<ApplicationsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/<ApplicationsController>
+        [HttpPut]
+        public IActionResult Put([FromBody] Application application)
         {
+            int numEffected = application.changeStatus();
+            if (numEffected == 1)
+                return Ok(application);
+            else
+                return NotFound("application was not found");
         }
 
         // DELETE api/<ApplicationsController>/5
