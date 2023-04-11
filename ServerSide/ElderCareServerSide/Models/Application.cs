@@ -18,6 +18,11 @@
             DBservices dbs = new DBservices();
             return dbs.InsertApplication(this);
         }
+        public static List<Application> Read(int id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadApplication(id);
+        }
 
         public Object getAllApps()
         {
@@ -41,6 +46,13 @@
         {
             DBservices dbs = new DBservices();
             return dbs.GetDeniedApps();
+        }
+
+        public int changeStatus()
+        {
+            DBservices dbs = new DBservices();
+
+            return dbs.UpdateAppStatus(this);
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics.X86;
 using ElderCareServerSide.Models;
 using System.ComponentModel.Design;
 using System.Runtime.ConstrainedExecution;
+//using static System.Net.Mime.MediaTypeNames;
 
 /// <summary>
 /// DBServices is a class created by me to provides some DataBase Services
@@ -129,6 +130,70 @@ public class DBservices
             }
 
             return EldersList;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
+    // This method reads an application
+    //--------------------------------------------------------------------------------------------------
+    public List<Application> ReadApplication(int id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadApplicationSP("spReadApplication", con, id); // create the command
+
+        try
+        {
+            List<Application> applicationList = new List<Application>();
+
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                Application application = new Application();
+                application.ID = Convert.ToInt32(dataReader["ID"]);
+                application.Status = dataReader["Status"].ToString();
+                application.HelpType = dataReader["HelpType"].ToString();
+                application.City = dataReader["City"].ToString();
+                application.StartDate = Convert.ToDateTime(dataReader["StartDate"]);
+                application.UpdateDate = Convert.ToDateTime(dataReader["UpdateDate"]);
+                application.EndDate = Convert.ToDateTime(dataReader["EndDate"]);
+                application.ElderID = Convert.ToInt32(dataReader["ElderID"]);
+                application.HandlingAssociationID = Convert.ToInt32(dataReader["HandlingAssociationID"]);
+                application.SentAssociationsID = dataReader["ElderID"].ToString();
+
+                applicationList.Add(application);
+            }
+
+            return applicationList;
         }
         catch (Exception ex)
         {
@@ -301,6 +366,7 @@ public class DBservices
                     helpType = dataReader["HelpType"].ToString(),
                     relativeName = dataReader["RelativeName"].ToString(),
                     relativeNum = dataReader["RelativeNum"].ToString(),
+                    sentAssociationsID = dataReader["SentAssociationsID"].ToString(),
                 });
             }
 
@@ -805,6 +871,51 @@ public class DBservices
 
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method updated an application's status 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateAppStatus(Application application)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateUpdateApplicationSP("spUpdateApplication", con, application); // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
     //---------------------------------------------------------------------------------
     // Create the insert elder command using a stored procedure
     //---------------------------------------------------------------------------------
@@ -889,6 +1000,57 @@ public class DBservices
         cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
 
         cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the read application by ID command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadApplicationSP(String spProcedure, SqlConnection con, int id)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the read new applications by ID command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateApplicationSP(String spProcedure, SqlConnection con, Application application)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", application.ID);
+        cmd.Parameters.AddWithValue("@status", application.Status);
+        cmd.Parameters.AddWithValue("@helpType", application.HelpType);
+        cmd.Parameters.AddWithValue("@city", application.City);
+        cmd.Parameters.AddWithValue("@startDate", application.StartDate);
+        cmd.Parameters.AddWithValue("@updateDate", application.UpdateDate);
+        cmd.Parameters.AddWithValue("@endDate", application.EndDate);
+        cmd.Parameters.AddWithValue("@elderID", application.ElderID);
+        cmd.Parameters.AddWithValue("@handlingAssociationID", application.HandlingAssociationID);
+        cmd.Parameters.AddWithValue("@sentAssociationsID", application.SentAssociationsID);
 
         return cmd;
     }

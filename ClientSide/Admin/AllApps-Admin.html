@@ -76,7 +76,17 @@
                             return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
                           }
                         },
-                        { data: "associationName" },
+                        { data: "associationName",
+                          render: function (data, type, row, meta) {
+                            if (row.associationName == 0) {
+                              return "-";
+                            }
+                            else {
+                              return row.associationName;
+                            }
+
+                          }
+                        },
                         {
                           data: "updateDate",
                           render: function (data, type, row, meta) {
