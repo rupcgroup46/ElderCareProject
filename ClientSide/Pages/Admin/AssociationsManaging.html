@@ -8,63 +8,7 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function () {
-            
-        });
-    </script>
-    <style>
-        th.sorting {
-            border-left: solid black 1px;
-            border-top: solid black 1px;
-        }
-
-        td {
-            border-left: solid black 1px;
-        }
-
-        h2 {
-            text-align:center;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            border: 1px solid #e7e7e7;
-            background-color: #f3f3f3;
-        }
-
-        li {
-            float: right;
-        }
-
-            li a {
-                display: block;
-                color: #666;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
-            }
-
-                li a:hover:not(.active) {
-                    background-color: #ddd;
-                }
-
-                li a.active {
-                    color: white;
-                    background-color: #2196f38f;
-                }
-        .inputs {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .helpType, .select-box {
-            margin: 0 10px;
-        }
-    </style>
+    <link href="/ClientSide/CSS/AdminCSS/AssociationManaging.css" rel="stylesheet" />
     <script>
       $(document).ready(function () {
 
@@ -98,17 +42,38 @@
                   { data: "name" },
                   { data: "id" }
                 ],
+                initComplete: function () {
+                  var table = this.api();
+
+                  table.columns([4,5]).every(function () {
+                    var column = this;
+                    var select = $('<select><option value=""></option></select>')
+                      .appendTo($(column.footer()).empty())
+                      .on('change', function () {
+                        var val = $.fn.dataTable.util.escapeRegex($(this).val());
+
+                        column.search(val ? '^' + val + '$' : '', true, false).draw();
+                      });
+
+                    column.data().unique().sort().each(function (d, j) {
+                      select.append('<option value="' + d + '">' + d + '</option>');
+                    });
+                  });
+                },
               });
             }
             catch (err) {
               alert(err);
             }
+            $('#helpTypeInput').on('keyup', function () {
+              table.search(this.value).draw();
+            });
           })
           .catch(error => console.error(error));
 
 
-        //Get cities list from the server
-        fetch('https://localhost:7241/api/Associations/cities', {
+          //Get cities list from the server
+          fetch('https://localhost:7241/api/Associations/cities', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -123,8 +88,6 @@
             }
           })
           .catch(error => console.error(error));
-
-          
         });
     </script>
 </head>
@@ -138,23 +101,6 @@
     </ul>
     <div>
         <h2>ניהול עמותות</h2>
-        <div class="inputs">
-            <input id="helpTypeInput" type="text" list="helpTypes" class="form-control" placeholder="תחום סיוע" value="" />
-                        <datalist id="helpTypes">
-                          <option value="">כל התחומים</option>
-                          <option value="מזון">מזון</option>
-                          <option value="ביגוד">ביגוד</option>
-                          <option value="מרכז יום">מרכז יום</option>
-                          <option value="סיעוד">סיעוד</option>
-                          <option value="ייעוץ">ייעוץ</option>
-                          <option value="תמיכה">תמיכה</option>
-                       </datalist>
-            </select>
-            <input id="cityInput" type="text" list="cities" class="form-control" placeholder="אזור פעילות" value="" />
-                        <datalist id="cities">
-                       </datalist>
-            </select>
-        </div>
     </div>
     <table id="associationsTable" class="display" style="width:100%">
         <thead>
@@ -169,6 +115,9 @@
                 <th>מספר עמותה</th>
             </tr>
         </thead>
+        <tfoot>
+          <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+        </tfoot>
     </table>
 </body>
 </html>

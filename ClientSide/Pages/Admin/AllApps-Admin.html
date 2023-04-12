@@ -8,130 +8,89 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <style>
-        th.sorting {
-            border-left: solid black 1px;
-            border-top: solid black 1px;
-        }
+    <link href="/ClientSide/CSS/AdminCSS/AllApps-Admin.css" rel="stylesheet" />
+    <script>
+      $(document).ready(function () {
 
-        td {
-            border-left: solid black 1px;
-        }
+        //Get All Applications data from the server
+        fetch('https://localhost:7241/api/Applications/all', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("all applications: ", data);
+            applications = data;
+            try {
+              table = $("#appsTable").dataTable({
+                data: data,
+                pageLength: 10,
+                columns: [
+                  {
+                    data: "sentAssociationsID",
+                    render: function (data, type, row, meta) {
+                      return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
+                    }
+                  },
+                  {
+                    data: "associationName",
+                    render: function (data, type, row, meta) {
+                      if (row.associationName == 0) {
+                        return "-";
+                      }
+                      else {
+                        return row.associationName;
+                      }
 
-        h2 {
-            text-align:center;
-        }
-        ul {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            border: 1px solid #e7e7e7;
-            background-color: #f3f3f3;
-        }
+                    }
+                  },
+                  {
+                    data: "updateDate",
+                    render: function (data, type, row, meta) {
+                      if (row.updateDate.slice(0, 10) == "1970-01-01") {
+                        return "טרם עודכן";
+                      }
+                      else {
+                        return row.updateDate.slice(0, 10);
+                      }
 
-        li {
-            float: right;
-        }
+                    }
+                  },
+                  {
+                    data: "status",
+                    render: function (data, type, row, meta) {
+                      if (row.status == "null") {
+                        return "טרם נוצר קשר";
+                      }
+                      else {
+                        return row.status;
+                      }
 
-            li a {
-                display: block;
-                color: #666;
-                text-align: center;
-                padding: 14px 16px;
-                text-decoration: none;
+                    }
+                  },
+                  { data: "helpType" },
+                  { data: "city" },
+                  { data: "phoneNum" },
+                  { data: "name" },
+                  {
+                    data: "startDate",
+                    render: function (data, type, row, meta) {
+                      return row.startDate.slice(0, 10);
+                    }
+                  },
+                  { data: "id" }
+                ],
+              });
             }
-
-                li a:hover:not(.active) {
-                    background-color: #ddd;
-                }
-
-                li a.active {
-                    color: white;
-                    background-color: #2196f38f;
-                }
-    </style>
-        <script>
-            $(document).ready(function () {
-
-              //Get All Applications data from the server
-              fetch('https://localhost:7241/api/Applications/all', {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application/json'
-                },
-              })
-                .then(response => response.json())
-                .then(data => {
-                  console.log("all applications: ", data);
-                  applications = data;
-                  try {
-                    table = $("#appsTable").dataTable({
-                      data: data,
-                      pageLength: 10,
-                      columns: [
-                        {
-                          data: "sentAssociationsID",
-                          render: function (data, type, row, meta) {
-                            return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
-                          }
-                        },
-                        { data: "associationName",
-                          render: function (data, type, row, meta) {
-                            if (row.associationName == 0) {
-                              return "-";
-                            }
-                            else {
-                              return row.associationName;
-                            }
-
-                          }
-                        },
-                        {
-                          data: "updateDate",
-                          render: function (data, type, row, meta) {
-                            if (row.updateDate.slice(0,10) == "1970-01-01"){
-                              return "טרם עודכן";
-                            }
-                            else {
-                              return row.updateDate.slice(0,10);
-                            }
-                            
-                          }
-                        },
-                        { 
-                          data: "status",
-                          render: function (data, type, row, meta) {
-                            if (row.status == "null"){
-                              return "טרם נוצר קשר";
-                            }
-                            else {
-                              return row.status;
-                            }
-                            
-                          }
-                        },
-                        { data: "helpType" },
-                        { data: "city" },
-                        { data: "phoneNum" },
-                        { data: "name" },
-                        {
-                          data: "startDate",
-                          render: function (data, type, row, meta) {
-                            return row.startDate.slice(0,10);
-                          }
-                        },
-                        { data: "id" }
-                      ],
-                    });
-                  }
-                  catch (err) {
-                    alert(err);
-                  }
-                })
-                .catch(error => console.error(error));
-            });
-      </script>
+            catch (err) {
+              alert(err);
+            }
+          })
+          .catch(error => console.error(error));
+      });
+    </script>
 </head>
 <body>
     <ul>
