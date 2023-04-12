@@ -1,6 +1,5 @@
 ﻿<!DOCTYPE html>
 <html>
-
 <head>
   <meta charset="utf-8" />
   <title></title>
@@ -8,60 +7,13 @@
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="http://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
   <script src="http://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-  <style>
-    th.sorting {
-      border-left: solid black 1px;
-      border-top: solid black 1px;
-    }
+  <link href="/ClientSide/CSS/AssociationCSS/NewApps-Association.css" rel="stylesheet" />
 
-    td {
-      border-left: solid black 1px;
-    }
-
-    h2 {
-      text-align: center;
-    }
-
-    ul {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      overflow: hidden;
-      border: 1px solid #e7e7e7;
-      background-color: #f3f3f3;
-    }
-
-    li {
-      float: right;
-    }
-
-    li a {
-      display: block;
-      color: #666;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-    }
-
-    li a:hover:not(.active) {
-      background-color: #ddd;
-    }
-
-    li a.active {
-      color: white;
-      background-color: #2196f38f;
-    }
-
-    li.logOut {
-      float:left;
-      background-color: #80808040;
-    }
-  </style>
   <script>
     $(document).ready(function () {
 
       //Get New Applications data from the server
-      fetch(`https://localhost:7241/api/Associations/all/${sessionStorage.association_id}`, {
+      fetch(`https://localhost:7241/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -69,7 +21,7 @@
       })
         .then(response => response.json())
         .then(data => {
-          console.log("all applications: ", data);
+          console.log("new applications: ", data);
           applications = data;
           try {
             table = $("#appsTable").dataTable({
@@ -80,7 +32,7 @@
                   data: "id",
                   render: function (data, type, row, meta) {
                     if (row.status == "null") {
-                        str = '<input id="'+row.id+'" class="myInput" list="status" placeholder="טרם נוצר קשר" />';
+                      str = '<input id="' + row.id + '" class="myInput" list="status" placeholder="טרם נוצר קשר" />';
                     }
                     else {
                       str = '<input id="' + row.id + '" class="myInput" list="status" placeholder="' + row.status + '" />';
@@ -156,7 +108,6 @@
             return tmpApp;
           })
           .then(tmpApp => {
-            console.log("check: ", tmpApp[0]);
             let endDate = new Date(null);
             if (selectedValue == "טופל" || selectedValue == "אי התאמה") {
               endDate = new Date();
@@ -185,37 +136,35 @@
           .then(response => response.json())
           .then(data => console.log("Application Was updated: ", data))
           .catch(error => console.error(error));
-        });
+
+      });
     });
   </script>
 </head>
-
 <body>
-  <ul>
-    <li><a href="NewApps-Association.html">פניות חדשות</a></li>
-    <li><a class="active" href="AllApps-Association.html">כלל הפניות</a></li>
-    <li><a href="FinishedApps-Association.html">פניות סגורות</a></li>
-    <li class="logOut"><a href="AssoLogin.html">התנתק</a></li>
-  </ul>
-  <div>
-    <h2>כלל הפניות</h2>
-  </div>
-  <table id="appsTable" class="display" style="width:100%">
-    <thead>
-      <tr>
-        <th>סטטוס</th>
-        <th>לפנות למבקש הסיוע/מגיש הבקשה</th>
-        <th>טלפון מגיש הבקשה</th>
-        <th>מגיש הבקשה</th>
-        <th>סוג הסיוע</th>
-        <th>אזור מגורים</th>
-        <th>מספר טלפון</th>
-        <th>מבקש הסיוע</th>
-        <th>תאריך הפנייה</th>
-        <th></th>
-      </tr>
-    </thead>
-  </table>
+    <ul>
+        <li><a class="active" href="NewApps-Association.html">פניות חדשות</a></li>
+        <li><a href="AllApps-Association.html">כלל הפניות</a></li>
+        <li><a href="FinishedApps-Association.html">פניות סגורות</a></li>
+        <li class="logOut"><a href="AssoLogin.html">התנתק</a></li>
+    </ul>
+    <div>
+        <h2>פניות חדשות</h2>
+    </div>
+    <table id="appsTable" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th>סטטוס</th>
+                <th>טלפון מגיש הבקשה</th>
+                <th>מגיש הבקשה</th>
+                <th>סוג הסיוע</th>
+                <th>אזור מגורים</th>
+                <th>מספר טלפון</th>
+                <th>מבקש הסיוע</th>
+                <th>תאריך הפנייה</th>
+                <th></th>
+            </tr>
+        </thead>
+    </table>
 </body>
-
 </html>
