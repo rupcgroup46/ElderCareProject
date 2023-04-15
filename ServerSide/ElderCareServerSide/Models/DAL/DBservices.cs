@@ -578,6 +578,64 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method reads all the associations
+    //--------------------------------------------------------------------------------------------------
+    public List<Admin> ReadAdmin()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadCommandSP("spReadAdmin", con); // create the command
+
+        try
+        {
+            List<Admin> admins = new List<Admin>();
+
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                Admin a = new Admin();
+                a.ID = Convert.ToInt32(dataReader["Admin_ID"]);
+                a.Name = dataReader["Admin_Name"].ToString();
+                a.Email = dataReader["Admin_Email"].ToString();
+                a.Password = dataReader["Admin_Password"].ToString();
+
+                admins.Add(a);
+            }
+
+            return admins;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method reads relevant associations
     //--------------------------------------------------------------------------------------------------
     public List<Association> ReadAssociationsByParameters(string helpType, string city)
