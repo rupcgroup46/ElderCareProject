@@ -212,6 +212,69 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method reads an application
+    //--------------------------------------------------------------------------------------------------
+    public List<Association> ReadAssociation(int id)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadAssociationSP("spReadAssociation", con, id); // create the command
+
+        try
+        {
+            List<Association> AssociationsList = new List<Association>();
+
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                Association a = new Association();
+                a.ID = Convert.ToInt32(dataReader["Association_ID"]);
+                a.Name = dataReader["Association_Name"].ToString();
+                a.Email = dataReader["Association_Email"].ToString();
+                a.Password = dataReader["Association_Password"].ToString();
+                a.HelpType = dataReader["Asso_Help_Type"].ToString();
+                a.City = dataReader["Asso_City"].ToString();
+                a.TotalApps = Convert.ToInt32(dataReader["Association_Total_Apps"]);
+                a.HelpedApps = Convert.ToInt32(dataReader["Association_Helped_Apps"]);
+                a.HelpingRatio = float.Parse(dataReader["Association_Helping_Ratio"].ToString());
+
+                AssociationsList.Add(a);
+            }
+
+            return AssociationsList;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method reads all cities
     //--------------------------------------------------------------------------------------------------
     public List<string> ReadAllCities()
@@ -974,6 +1037,51 @@ public class DBservices
 
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method updated an application's status 
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateAssoScore(Association association)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateUpdateAssoScoreSP("spUpdateAssoScore", con, association); // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
     //---------------------------------------------------------------------------------
     // Create the insert elder command using a stored procedure
     //---------------------------------------------------------------------------------
@@ -1084,7 +1192,28 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
-    // Create the read new applications by ID command using a stored procedure
+    // Create the read association by ID command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateReadAssociationSP(String spProcedure, SqlConnection con, int id)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", id);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the update application command using a stored procedure
     //---------------------------------------------------------------------------------
     private SqlCommand CreateUpdateApplicationSP(String spProcedure, SqlConnection con, Application application)
     {
@@ -1109,6 +1238,35 @@ public class DBservices
         cmd.Parameters.AddWithValue("@elderID", application.ElderID);
         cmd.Parameters.AddWithValue("@handlingAssociationID", application.HandlingAssociationID);
         cmd.Parameters.AddWithValue("@sentAssociationsID", application.SentAssociationsID);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the update association command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateAssoScoreSP(String spProcedure, SqlConnection con, Association association)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@id", association.ID);
+        cmd.Parameters.AddWithValue("@name", association.Name);
+        cmd.Parameters.AddWithValue("@email", association.Email);
+        cmd.Parameters.AddWithValue("@password", association.Password);
+        cmd.Parameters.AddWithValue("@helpType", association.HelpType);
+        cmd.Parameters.AddWithValue("@city", association.City);
+        cmd.Parameters.AddWithValue("@totalApps", association.TotalApps);
+        cmd.Parameters.AddWithValue("@helpedApps", association.HelpedApps);
+        cmd.Parameters.AddWithValue("@helpingRatio", association.HelpingRatio);
 
         return cmd;
     }

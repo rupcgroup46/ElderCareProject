@@ -13,12 +13,12 @@
     <script>
 
       var selectedDivs = []; //array of helptypes 
-      var nextElderID = 0; //Elders' ID counter
+      var lastElderID = 0; //Elders' ID counter
 
       $(document).ready(function() {
 
         //Get cities list from the server
-        fetch('https://localhost:7241/api/Associations/cities', {
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/cities', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
@@ -35,7 +35,7 @@
             .catch(error => console.error(error));
 
         //Get elders data from the server
-        fetch('https://localhost:7241/api/Elders', {
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Elders', {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json'
@@ -43,7 +43,7 @@
           })
             .then(response => response.json())
             .then(data => {
-              nextElderID = data[data.length-1].id; //generate next elder ID
+              lastElderID = data[data.length-1].id; //generate next elder ID
             })
             .catch(error => console.error(error));
         
@@ -85,7 +85,7 @@
           console.log("New Elder: ",newElder);
 
           //POST the new elder object
-          fetch('https://localhost:7241/api/Elders', {
+          fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Elders', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -103,7 +103,7 @@
             var chosenAssociationsStr = "";
 
             //GET relevant associations
-            fetch(`https://localhost:7241/api/Associations/helpType/${selectedDivs[i]}/city/${city}`, {
+            fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/helpType/${selectedDivs[i]}/city/${city}`, {
               method: 'GET',
               headers: {
                 'Content-Type': 'application/json'
@@ -112,7 +112,7 @@
               .then(response => response.json())
               .then(associations => {
                 console.log("all relevant associations: ", associations);
-                associations.sort((a, b) => a.helpingRatio - b.helpingRatio); //sort the array by their helping ratio
+                associations.sort((a, b) => b.helpingRatio - a.helpingRatio); //sort the array by their helping ratio
                 console.log("sorted relevant associations: ", associations);
                 switch (true) {
                   case (associations.length > 0 && associations.length <= 5):
@@ -127,20 +127,62 @@
                     break;
                 }
                 console.log("chosen: ", chosenAssociations);
-                chosenAssociationsStr = chosenAssociations.map(item => item.id).join(',');
+                for (let i = 0; i < chosenAssociations.length; i++) {
 
+                  //GET association's details
+                  fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${chosenAssociations[i].id}`, {
+                    method: 'GET',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                  })
+                    .then(response => response.json())
+                    .then(data => {
+                      tmpAssociation = data;
+                      return tmpAssociation;
+                    })
+                    .then(tmpAssociation => {
+                      //create updated association object
+                      updateAssociation = {
+                        ID:chosenAssociations[i].id,
+                        Name: tmpAssociation[0].name,
+                        Email: tmpAssociation[0].email,
+                        Password: tmpAssociation[0].password,
+                        HelpType: tmpAssociation[0].helpType,
+                        City: tmpAssociation[0].city,
+                        TotalApps: tmpAssociation[0].totalApps+1,
+                        HelpedApps: tmpAssociation[0].helpedApps,
+                        HelpingRatio: tmpAssociation[0].helpingRatio,
+                      }
+                      console.log("updateAssociation: ", updateAssociation)
+
+                      //PUT association's details
+                      return fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations`, {
+                        method: 'PUT',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(updateAssociation)
+                      })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log("Association was updated: ", data))
+                    .catch(error => console.error(error));
+                }
+                chosenAssociationsStr = chosenAssociations.map(item => item.id).join(',');
                 return chosenAssociationsStr;
               })
               .then(chosenAssociationsStr => {
 
-                let status = "null";
-                let today = new Date();
-                let endDate = new Date(null);
+                let status = "null"; //application's status is null by default
+                let today = new Date(); //application's start date is today by default
+                let endDate = new Date(null); //application's end date is null by default
+                let nextElderID = lastElderID+1;
 
-                //if no associations were found
+                //if no associations were found change status and endDate
                 if (chosenAssociationsStr == ""){
                   status = "לא נמצאה עמותה";
-                  endDate = new Date();
+                  endDate = today;
                   alert("לא נמצאו עמותות מתאימות");
                 }
                 
@@ -152,14 +194,14 @@
                   StartDate: today,
                   UpdateDate: new Date(null),
                   EndDate: endDate,
-                  ElderID: nextElderID+1,
+                  ElderID: nextElderID,
                   HandlingAssociationID: 0,
                   SentAssociationsID: chosenAssociationsStr
                 }
                 console.log("New Application: ", newApplication);
 
                 //POST new application object
-                return fetch('https://localhost:7241/api/Applications', {
+                return fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Applications', {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json'
@@ -174,7 +216,6 @@
               })
               .catch(error => console.error(error));
           }
-
           return false;
         })
 
@@ -199,22 +240,22 @@
 
       //audio for input fields
       window.onload = function () {
-        // const nameInput = document.getElementById("nameInput");
-        // const phoneInput = document.getElementById("phoneInput");
-        // const cityInput = document.getElementById("cityInput");
-        // const nameAudio = document.getElementById("nameAudio");
-        // const phoneAudio = document.getElementById("phoneAudio");
-        // const cityAudio = document.getElementById("cityAudio");
+        const nameInput = document.getElementById("nameInput");
+        const phoneInput = document.getElementById("phoneInput");
+        const cityInput = document.getElementById("cityInput");
+        const nameAudio = document.getElementById("nameAudio");
+        const phoneAudio = document.getElementById("phoneAudio");
+        const cityAudio = document.getElementById("cityAudio");
 
-        // nameInput.addEventListener("click", function () {
-        //     nameAudio.play();
-        // });
-        // phoneInput.addEventListener("click", function () {
-        //     phoneAudio.play();
-        // });
-        // cityInput.addEventListener("click", function () {
-        //     cityAudio.play();
-        // });
+        nameInput.addEventListener("click", function () {
+            nameAudio.play();
+        });
+        phoneInput.addEventListener("click", function () {
+            phoneAudio.play();
+        });
+        cityInput.addEventListener("click", function () {
+            cityAudio.play();
+        });
       }
 
     </script>
@@ -277,13 +318,13 @@
                     <div class="form-group">
                         <input id="nameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
                         <audio id="nameAudio">
-                            <source src="" type="audio/mp4" /> <!--Add audio-->
+                            <source src="/ClientSide/audio/nameAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group">
                         <input id="phoneInput" type="text" name="txtEmail" class="form-control" placeholder="* מספר טלפון" value="" />
                         <audio id="phoneAudio">
-                            <source src="" type="audio/mp4" /> <!--Add audio-->
+                            <source src="/ClientSide/audio/phoneNumAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group">
@@ -291,7 +332,7 @@
                         <datalist id="cities">
                        </datalist>
                         <audio id="cityAudio">
-                            <source src="" type="audio/mp4" /> <!--Add audio-->
+                            <source src="/ClientSide/audio/cityAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group" style="display: flex;justify-content: center; align-content: center;">

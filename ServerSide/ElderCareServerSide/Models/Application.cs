@@ -51,7 +51,6 @@
         public int changeStatus()
         {
             DBservices dbs = new DBservices();
-
             return dbs.UpdateAppStatus(this);
         }
     }

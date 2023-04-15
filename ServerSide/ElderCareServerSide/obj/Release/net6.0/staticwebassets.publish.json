@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "FcIIEV1GGStKPFdk3qoC8FhPESXsgGrAYcqvrER5dpg=",
+  "Source": "ElderCareServerSide",
+  "BasePath": "_content/ElderCareServerSide",
+  "Mode": "Default",
+  "ManifestType": "Publish",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

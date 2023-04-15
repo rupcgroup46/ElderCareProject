@@ -11,8 +11,8 @@
   <script>
     $(document).ready(function () {
 
-      //Get All Applications data from the server
-      fetch('https://localhost:7241/api/Applications/closed', {
+      //Get All Closed Applications data
+      fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Applications/closed', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

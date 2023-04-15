@@ -12,8 +12,8 @@
     <script>
       $(document).ready(function () {
 
-        //Get Associations data from the server
-        fetch('https://localhost:7241/api/Associations', {
+        //Get Associations data
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Associations', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -34,7 +34,17 @@
                       return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
                     }
                   },
-                  { data: "helpingRatio" },
+                  {
+                     data: "helpingRatio",
+                     render: function (data, type, row, meta) {
+                     if (row.helpingRatio == "0") {
+                       return "-";
+                     }
+                     else {
+                       return row.helpingRatio.toString().slice(0,4) +"%";
+                     }
+                    }
+                  },
                   { data: "helpedApps" },
                   { data: "totalApps" },
                   { data: "city" },
@@ -42,9 +52,12 @@
                   { data: "name" },
                   { data: "id" }
                 ],
+
+                //filtering options for dataTable
                 initComplete: function () {
                   var table = this.api();
 
+                  //filters for helpType and city
                   table.columns([4,5]).every(function () {
                     var column = this;
                     var select = $('<select><option value=""></option></select>')
@@ -64,27 +77,6 @@
             }
             catch (err) {
               alert(err);
-            }
-            $('#helpTypeInput').on('keyup', function () {
-              table.search(this.value).draw();
-            });
-          })
-          .catch(error => console.error(error));
-
-
-          //Get cities list from the server
-          fetch('https://localhost:7241/api/Associations/cities', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        })
-          .then(response => response.json())
-          .then(data => {
-            document.getElementById("cities").innerHTML = "";
-            for (let i = 0; i < data.length; i++) {
-              str = "<option value='" + data[i] + "'>"
-              document.getElementById("cities").innerHTML += str;
             }
           })
           .catch(error => console.error(error));
