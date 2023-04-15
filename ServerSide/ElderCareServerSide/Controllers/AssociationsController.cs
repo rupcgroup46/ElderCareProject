@@ -25,6 +25,13 @@ namespace ElderCareServerSide.Controllers
         }
 
         // GET api/<AssociationsController>/5
+        [HttpGet("{id}")]
+        public List<Association> GetByID(int id)
+        {
+            return Association.Read(id);
+        }
+
+        // GET api/<AssociationsController>/5
         [HttpGet("new/{id}")]
         public Object Get(string id)
         {
@@ -73,10 +80,15 @@ namespace ElderCareServerSide.Controllers
         {
         }
 
-        // PUT api/<AssociationsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        // PUT api/<AssociationsController>
+        [HttpPut]
+        public IActionResult Put([FromBody] Association association)
         {
+            int numEffected = association.updateScore();
+            if (numEffected == 1)
+                return Ok(association);
+            else
+                return NotFound("association was not found");
         }
 
         // DELETE api/<AssociationsController>/5

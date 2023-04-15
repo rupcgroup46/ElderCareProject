@@ -13,8 +13,8 @@
   <script>
     $(document).ready(function () {
 
-      //Get All Applications data from the server
-      fetch('https://localhost:7241/api/Applications/denied', {
+      //Get All Denied Applications data
+      fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Applications/denied', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -34,7 +34,11 @@
                 {
                   data: "endDate",
                   render: function (data, type, row, meta) {
-                    return row.endDate.slice(0, 10);
+                    if (row.endDate.slice(0, 10) == "1970-01-01"){
+                      return "-";
+                    } else {
+                      return row.endDate.slice(0, 10);
+                    }
                   }
                 },
                 { data: "status" },
@@ -50,6 +54,8 @@
                 },
                 { data: "id" }
               ],
+
+              //filtering options for dataTable
               initComplete: function () {
                 var table = this.api();
                 var select = $('<select><option value=""></option></select>')
@@ -70,6 +76,7 @@
                   select.append('<option value="' + value + '">' + value + '</option>');
                 });
 
+                //filters for helpType and city
                 table.columns([4, 5]).every(function () {
                   var column = this;
                   var select = $('<select><option value=""></option></select>')

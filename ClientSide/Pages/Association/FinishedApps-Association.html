@@ -11,8 +11,8 @@
   <script>
     $(document).ready(function () {
 
-      //Get All Applications data from the server
-      fetch(`https://localhost:7241/api/Associations/closed/${sessionStorage.getItem("association_id")}`, {
+      //Get All closed Applications data for a specific association
+      fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/closed/${sessionStorage.getItem("association_id")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'

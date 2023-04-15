@@ -12,8 +12,8 @@
   <script>
     $(document).ready(function () {
 
-      //Get New Applications data from the server
-      fetch(`https://localhost:7241/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
+      //Get All New Applications data for a specific association
+      fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json'
@@ -96,7 +96,9 @@
         var selectedValue = $(this).val();
         console.log("selected value: ", selectedValue);
         let tmpApp = {};
-        fetch(`https://localhost:7241/api/Applications/${rowId}`, {
+
+        //GET Application's data
+        fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications/${rowId}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -109,9 +111,49 @@
           })
           .then(tmpApp => {
             let endDate = new Date(null);
-            if (selectedValue == "טופל" || selectedValue == "אי התאמה") {
+            if (selectedValue == "טופל") {
               endDate = new Date();
+
+              //GET association's data
+              fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${sessionStorage.association_id}`, {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+              })
+                .then(response => response.json())
+                .then(data => {
+                  tmpAssociation = data;
+                  return tmpAssociation;
+                })
+                .then(tmpAssociation => {
+                  //create updated association object
+                  updateAssociation = {
+                    ID: sessionStorage.association_id,
+                    Name: tmpAssociation[0].name,
+                    Email: tmpAssociation[0].email,
+                    Password: tmpAssociation[0].password,
+                    HelpType: tmpAssociation[0].helpType,
+                    City: tmpAssociation[0].city,
+                    TotalApps: tmpAssociation[0].totalApps,
+                    HelpedApps: tmpAssociation[0].helpedApps + 1,
+                    HelpingRatio: tmpAssociation[0].helpingRatio,
+                  }
+                  console.log("updateAssociation: ", updateAssociation)
+                  //PUT association's details
+                  return fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations`, {
+                    method: 'PUT',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(updateAssociation)
+                  })
+                })
+                .then(response => response.json())
+                .then(data => console.log("Association was updated: ", data))
+                .catch(error => console.error(error));
             }
+            //create updated application object
             updateApp = {
               ID: rowId,
               Status: selectedValue,
@@ -125,7 +167,8 @@
               SentAssociationsID: tmpApp[0].sentAssociationsID
             }
             console.log("updateApp: ", updateApp)
-            return fetch(`https://localhost:7241/api/Applications`, {
+            //PUT application's details
+            return fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications`, {
               method: 'PUT',
               headers: {
                 'Content-Type': 'application/json'
@@ -134,9 +177,8 @@
             })
           })
           .then(response => response.json())
-          .then(data => console.log("Application Was updated: ", data))
+          .then(data => console.log("Application was updated: ", data))
           .catch(error => console.error(error));
-
       });
     });
   </script>

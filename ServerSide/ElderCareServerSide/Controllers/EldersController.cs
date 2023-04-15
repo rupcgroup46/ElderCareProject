@@ -34,15 +34,6 @@ namespace ElderCareServerSide.Controllers
                 return NotFound();
         }
 
-
-        // POST api/<EldersController>
-        //[HttpPost]
-        //public list<object> get(int id)
-        //{
-        //    test = new Elder();
-        //    return test.getElderList(id)
-        //}
-
         // PUT api/<EldersController>/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)

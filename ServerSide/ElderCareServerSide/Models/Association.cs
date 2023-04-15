@@ -18,6 +18,12 @@
             return dbs.ReadAssociations();
         }
 
+        public static List<Association> Read(int id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.ReadAssociation(id);
+        }
+
         public static List<Association> ReadByParameters(string helpType, string city)
         {
             DBservices dbs = new DBservices();
@@ -59,6 +65,12 @@
                     return association;
             }
             return null;
+        }
+
+        public int updateScore()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateAssoScore(this);
         }
     }
 }
