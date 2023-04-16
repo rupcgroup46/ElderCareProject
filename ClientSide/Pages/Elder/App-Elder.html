@@ -58,7 +58,11 @@
   
         //form submit
         $("#helpRequest").submit(function(){
-
+          if (selectedDivs.length == 0) {
+            alert("יש לבחור תחום סיוע נדרש");
+            return false;
+          }
+          
           //setup fields
           const name = $("#nameInput").val();
           const phoneNum = $("#phoneInput").val();
@@ -273,19 +277,19 @@
                             <tr>
                                 <td>
                                     <div id="ביגוד" class="selectType">
-                                        <img src="/ClientSide/images/clothes icon.png" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/clothes icon.png" />
                                         <p>ביגוד</p>
                                     </div>
                                 </td>
                                 <td>
                                     <div id="מזון" class="selectType">
-                                        <img src="/ClientSide/images/food icon.webp" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/food icon.png" />
                                         <p>מזון</p>
                                     </div>
                                 </td>
                                 <td>
                                     <div id="סיעוד" class="selectType">
-                                        <img src="/ClientSide/images/nursing icon.png" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/nursing icon.png" />
                                         <p>סיעוד</p>
                                     </div>
                                 </td>
@@ -293,19 +297,19 @@
                             <tr>
                                 <td>
                                     <div id="תמיכה" class="selectType">
-                                        <img src="/ClientSide/images/support icon.webp" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/support icon.png" />
                                         <p>תמיכה</p>
                                     </div>
                                 </td>
                                 <td>
                                     <div id="ייעוץ" class="selectType">
-                                        <img src="/ClientSide/images/consultation icon.png" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/consultation icon.png" />
                                         <p>ייעוץ</p>
                                     </div>
                                 </td>
                                 <td>
                                     <div id="מרכז יום" class="selectType">
-                                        <img src="/ClientSide/images/day care icon.png" />
+                                        <img src="/cgroup46/prod/client/ClientSide/images/day care icon.png" />
                                         <p>מרכזי יום</p>
                                     </div>
                                 </td>
@@ -318,13 +322,13 @@
                     <div class="form-group">
                         <input id="nameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
                         <audio id="nameAudio">
-                            <source src="/ClientSide/audio/nameAudio.mp3" type="audio/mp4" />
+                            <source src="/cgroup46/prod/client/ClientSide/audio/nameAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group">
                         <input id="phoneInput" type="text" name="txtEmail" class="form-control" placeholder="* מספר טלפון" value="" />
                         <audio id="phoneAudio">
-                            <source src="/ClientSide/audio/phoneNumAudio.mp3" type="audio/mp4" />
+                            <source src="/cgroup46/prod/client/ClientSide/audio/phoneNumAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group">
@@ -332,7 +336,7 @@
                         <datalist id="cities">
                        </datalist>
                         <audio id="cityAudio">
-                            <source src="/ClientSide/audio/cityAudio.mp3" type="audio/mp4" />
+                            <source src="/cgroup46/prod/client/ClientSide/audio/cityAudio.mp3" type="audio/mp4" />
                         </audio>
                     </div>
                     <div class="form-group" style="display: flex;justify-content: center; align-content: center;">
