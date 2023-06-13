@@ -8,7 +8,7 @@
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
   <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-  <link href="../../CSS/AssociationCSS/AllApps-Association.css" rel="stylesheet" />
+  <link href="../../CSS/dataTable.css" rel="stylesheet" />
   <script>
     $(document).ready(function () {
 
@@ -45,6 +45,17 @@
                     str += '<option value="אי התאמה">';
                     str += '</datalist>';
                     return str;
+                  }
+                },
+                {
+                  data: "relativeName",
+                  render: function (data, type, row, meta) {
+                    if (row.relativeName == "null") {
+                      return "-";
+                    }
+                    else {
+                      return row.relativeName
+                    }
                   }
                 },
                 {
@@ -180,7 +191,10 @@
             })
           })
           .then(response => response.json())
-          .then(data => console.log("Application was updated: ", data))
+          .then(data => {
+            console.log("Application was updated: ", data)
+            alert("סטטוס הבקשה שונה בהצלחה")
+          })
           .catch(error => console.error(error));
         });
     });
@@ -192,11 +206,12 @@
     <li><a href="NewApps-Association.html">פניות חדשות</a></li>
     <li><a class="active" href="AllApps-Association.html">כלל הפניות</a></li>
     <li><a href="FinishedApps-Association.html">פניות סגורות</a></li>
+    <li><a href="Events.html">אירועים</a></li>
     <li class="logOut"><a href="AssoLogin.html">התנתק</a></li>
   </ul>
-  <div>
+  <!-- <div>
     <h2>כלל הפניות</h2>
-  </div>
+  </div> -->
   <table id="appsTable" class="display" style="width:100%">
     <thead>
       <tr>

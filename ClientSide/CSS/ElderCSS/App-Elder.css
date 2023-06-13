@@ -1,8 +1,12 @@
 .contact-form {
-  background: #fff;
+  /* background: #fff; */
   margin-top: 10%;
   margin-bottom: 5%;
   /*width: 70%;*/
+}
+
+form#helpRequest {
+  height: 418px;
 }
 
   .contact-form .form-control {
@@ -20,9 +24,15 @@
       transform: rotate(29deg);
   }
 
-.contact-form form {
-  padding: 14%;
-  padding-top: 0px;
+  .contact-form form {
+    padding: 14%;
+    padding-top: 25px;
+    border-radius: 50px;
+    border: 2px solid #fff;
+    background-color: #fff;
+    font-size: 20px;
+    font-family: system-ui;
+    font-weight: 400;
 }
 
   .contact-form form .row {

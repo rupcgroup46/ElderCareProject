@@ -148,6 +148,70 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method reads all the events
+    //--------------------------------------------------------------------------------------------------
+    public List<Eventt> ReadEvents()
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateReadCommandSP("spReadEvents", con); // create the command
+
+        try
+        {
+            List<Eventt> list = new List<Eventt>();
+
+            SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dataReader.Read())
+            {
+                Eventt eventt = new Eventt();
+                eventt.EventId = Convert.ToInt32(dataReader["EventId"]);
+                eventt.Name = dataReader["Name"].ToString();
+                eventt.Description = dataReader["Description"].ToString();
+                eventt.Address = dataReader["Address"].ToString();
+                eventt.Lat = Convert.ToDecimal(dataReader["Lat"]);
+                eventt.Lng = Convert.ToDecimal(dataReader["Lng"]);
+                eventt.Date = Convert.ToDateTime(dataReader["date"]);
+                eventt.AssociationId = Convert.ToInt32(dataReader["AssociationId"]);
+                eventt.HelipingAssociations = dataReader["HelipingAssociations"].ToString();
+                eventt.Participants = Convert.ToInt32(dataReader["Participants"]);
+
+                list.Add(eventt);
+            }
+
+            return list;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method reads an application
     //--------------------------------------------------------------------------------------------------
     public List<Application> ReadApplication(int id)
@@ -993,6 +1057,51 @@ public class DBservices
     }
 
     //--------------------------------------------------------------------------------------------------
+    // This method inserts an event to the events table 
+    //--------------------------------------------------------------------------------------------------
+    public int InsertEvent(Eventt eventt)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildInsertCommand(user); // helper method to build the insert string
+
+        cmd = CreateInsertEventSP("spInsertEvent", con, eventt); // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
+    //--------------------------------------------------------------------------------------------------
     // This method updated an application's status 
     //--------------------------------------------------------------------------------------------------
     public int UpdateAppStatus(Application application)
@@ -1296,6 +1405,35 @@ public class DBservices
         cmd.Parameters.AddWithValue("@elderID", application.ElderID);
         cmd.Parameters.AddWithValue("@handlingAssociationID", application.HandlingAssociationID);
         cmd.Parameters.AddWithValue("@sentAssociationsID", application.SentAssociationsID);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
+    // Create the insert application command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateInsertEventSP(String spInsertEvent, SqlConnection con, Eventt eventt)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spInsertEvent;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@name", eventt.Name);
+        cmd.Parameters.AddWithValue("@description", eventt.Description);
+        cmd.Parameters.AddWithValue("@address", eventt.Address);
+        cmd.Parameters.AddWithValue("@lat", eventt.Lat);
+        cmd.Parameters.AddWithValue("@lng", eventt.Lng);
+        cmd.Parameters.AddWithValue("@date", eventt.Date);
+        cmd.Parameters.AddWithValue("@associationId", eventt.AssociationId);
+        cmd.Parameters.AddWithValue("@helpingAssociations", eventt.HelipingAssociations);
+        cmd.Parameters.AddWithValue("@participants", eventt.Participants);
 
         return cmd;
     }

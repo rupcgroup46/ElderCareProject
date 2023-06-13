@@ -25,6 +25,11 @@ li {
   float: right;
 }
 
+li.logOut {
+  float: left;
+  background-color: #80808017;
+}
+
 li a {
   display: block;
   color: #666;
@@ -62,6 +67,13 @@ div#appsTable_wrapper {
   margin: 5px;
 }
 
+div#associationsTable_wrapper {
+  background-color: #fff;
+  padding: 5px;
+  border-radius: 10px;
+  margin: 5px;
+}
+
 thead {
   color: #808080bd
 }
@@ -83,6 +95,18 @@ div#appsTable_length {
 }
 
 div#appsTable_filter {
+  display:none;
+  font-family: system-ui;
+  color: #d2d2d2;
+}
+
+div#associationsTable_length {
+  display:none;
+  font-family: system-ui;
+  color: #d2d2d2;
+}
+
+div#associationsTable_filter {
   display:none;
   font-family: system-ui;
   color: #d2d2d2;

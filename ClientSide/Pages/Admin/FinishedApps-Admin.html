@@ -7,7 +7,7 @@
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
   <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-  <link href="../../CSS/AdminCSS/FinishedApps-Admin.css" rel="stylesheet" />
+  <link href="../../CSS/dataTable.css" rel="stylesheet" />
   <script>
     $(document).ready(function () {
 
@@ -53,6 +53,7 @@
                 },
                 { data: "id" }
               ],
+              order: [[9, 'asc']],
             });
           }
           catch (err) {
@@ -71,9 +72,9 @@
         <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
         <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
     </ul>
-    <div>
+    <!-- <div>
         <h2>פניות סגורות</h2>
-    </div>
+    </div> -->
     <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>
@@ -86,7 +87,7 @@
                 <th>מספר טלפון</th>
                 <th>מבקש הסיוע</th>
                 <th>תאריך הפנייה</th>
-                <th></th>
+                <th>מספר הפנייה</th>
             </tr>
         </thead>
     </table>
