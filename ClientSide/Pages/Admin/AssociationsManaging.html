@@ -8,7 +8,9 @@
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <link href="../../CSS/AdminCSS/AssociationManaging.css" rel="stylesheet" />
+    <link href="../../CSS/dataTable.css" rel="stylesheet" />
+    <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
+
     <script>
       $(document).ready(function () {
 
@@ -31,7 +33,7 @@
                   {
                     data: "email",
                     render: function (data, type, row, meta) {
-                      return "<button id='" + row.id + "'>פרטים נוספים</button>" //ADD MODAL
+                      return `<button id='i${row.id}' class='fa-solid fa-ellipsis'></button>` //ADD MODAL
                     }
                   },
                   {
@@ -52,6 +54,7 @@
                   { data: "name" },
                   { data: "id" }
                 ],
+                order: [[7, 'asc']],
 
                 //filtering options for dataTable
                 initComplete: function () {
@@ -91,13 +94,13 @@
         <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
         <li><a class="active" href="AssociationsManaging.html">ניהול עמותות</a></li>
     </ul>
-    <div>
+    <!-- <div>
         <h2>ניהול עמותות</h2>
-    </div>
+    </div> -->
     <table id="associationsTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th>פרטים נוספים</th>
+                <th></th>
                 <th>אחוז הצלחה</th>
                 <th>פניות שטופלו</th>
                 <th>פניות שהועברו</th>

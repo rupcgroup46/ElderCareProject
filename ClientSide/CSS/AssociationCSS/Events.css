@@ -1,0 +1,191 @@
+body {
+  font-family: system-ui;
+  background-color: #80808059;
+}
+
+ul {
+  list-style-type: none;
+  margin: 5px;
+  padding: 0;
+  overflow: hidden;
+  background-color: #fff;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+li.logOut {
+  float: left;
+  background-color: #80808017;
+}
+
+li {
+  float: right;
+}
+
+li a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+li a:hover:not(.active) {
+  background-color: #ddd;
+}
+
+a:hover {
+  color: #666666;
+  text-decoration: none;
+}
+
+li a.active {
+  color: white;
+  background-color: #2196f38f;
+}
+
+.contact-form {
+  background: #fff;
+  margin-bottom: 5%;
+}
+
+.contact-form .form-control {
+  border-radius: 1rem;
+}
+
+.contact-image {
+  text-align: center;
+}
+
+.contact-image img {
+  border-radius: 6rem;
+  width: 11%;
+  margin-top: -3%;
+  transform: rotate(29deg);
+}
+
+.contact-form form {
+  padding: 14%;
+}
+
+.contact-form form .row {
+  margin-bottom: -7%;
+}
+
+.contact-form h3 {
+  margin-bottom: 8%;
+  margin-top: -10%;
+  text-align: center;
+  color: #0062cc;
+}
+
+.contact-form .btnContact {
+  width: 50%;
+  border: none;
+  border-radius: 1rem;
+  padding: 1.5%;
+  background: #83c4f8;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+}
+
+.btnContactSubmit {
+  width: 50%;
+  border-radius: 1rem;
+  padding: 1.5%;
+  color: #fff;
+  background-color: #0062cc;
+  border: none;
+  cursor: pointer;
+}
+
+td {
+  width: 100px
+}
+
+div>img {
+  width: 100px;
+  height: 100px;
+}
+
+input.form-control {
+  text-align: right;
+}
+
+.col-md-6 {
+  text-align: center;
+}
+
+.selectType {
+  border: solid black 1px;
+  border-radius: 10px;
+  margin: 5px;
+}
+
+/* .container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50vh;
+
+
+} */
+
+.contact-form {
+  width: 100%;
+}
+
+h5 {
+  width: 350px;
+  margin-bottom: 25px;
+}
+
+div#map {
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+div#container {
+  display:flex;
+  margin:5px;
+}
+#map {
+  height: 89vh;
+  width: 50%;
+  background-color: rgb(56, 56, 56);
+}
+.container{
+  width: 50%;
+  height: 89vh;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+    align-items: center;
+}
+.scrollable-cards {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.card {
+  margin-bottom: 10px;
+}
+
+form#newEvent {
+  border-radius: 50px;
+    background-color: #d2d2d2;
+    /* margin-top: 50px; */
+    /* padding-top: 40px; */
+    height: 80%;
+    display: flex;
+    align-items: center;
+}
+
+div.container > form#newEvent {
+  display: flex;
+  align-items: center;
+}
+
+
