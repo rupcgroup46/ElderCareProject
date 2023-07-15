@@ -116,25 +116,18 @@
               .then(response => response.json())
               .then(associations => {
                 console.log("all relevant associations: ", associations);
-                associations.sort((a, b) => b.helpingRatio - a.helpingRatio); //sort the array by their helping ratio
+                associations.sort((a, b) => b.helpingRatio - a.helpingRatio);
                 console.log("sorted relevant associations: ", associations);
-                switch (true) {
-                  case (associations.length > 0 && associations.length <= 5):
-                    for (let i = 0; i < associations.length; i++) {
-                      chosenAssociations.push(associations[i]);
-                    }
-                    break;
-                  case (associations.length > 5):
-                    for (let i = 0; i < 5; i++) {
-                      chosenAssociations.push(associations[i]);
-                    }
-                    break;
-                }
-                console.log("chosen: ", chosenAssociations);
-                for (let i = 0; i < chosenAssociations.length; i++) {
+                var topTwoAssociations = associations.slice(0, 2);
+                var remainingAssociations = associations.slice(2);
+                var shuffledAssociations = remainingAssociations.sort(() => Math.random() - 0.5);
+                var randomAssociations = shuffledAssociations.slice(0, 3);
+                var combinedAssociations = [...topTwoAssociations, ...randomAssociations];
+                console.log("chosen: ", combinedAssociations);
+                for (let i = 0; i < combinedAssociations.length; i++) {
 
                   //GET association's details
-                  fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${chosenAssociations[i].id}`, {
+                  fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${combinedAssociations[i].id}`, {
                     method: 'GET',
                     headers: {
                       'Content-Type': 'application/json'
@@ -148,7 +141,7 @@
                     .then(tmpAssociation => {
                       //create updated association object
                       updateAssociation = {
-                        ID:chosenAssociations[i].id,
+                        ID:combinedAssociations[i].id,
                         Name: tmpAssociation[0].name,
                         Email: tmpAssociation[0].email,
                         Password: tmpAssociation[0].password,
@@ -173,7 +166,7 @@
                     .then(data => console.log("Association was updated: ", data))
                     .catch(error => console.error(error));
                 }
-                chosenAssociationsStr = chosenAssociations.map(item => item.id).join(',');
+                chosenAssociationsStr = combinedAssociations.map(item => item.id).join(',');
                 return chosenAssociationsStr;
               })
               .then(chosenAssociationsStr => {
@@ -265,16 +258,22 @@
     </script>
 </head>
 <body>
-    <div class="container contact-form">
+  <div id="container">
+    <div class="header">
+      <h1>ElderCare</h1>
+      <p>חיבור בין קשישים לעמותות הסיוע</p>
+    </div>
+    <div class="contact-form">
         <form id="helpRequest">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <table>
-                            <tr>
-                                <p>:אנא בחר את סוגי הסיוע המבוקשים</p>
-                            </tr>
-                            <tr>
+                            <thead>
+                                <tr><th colspan="3"><p>:אנא בחר את סוגי הסיוע המבוקשים</p></th></tr>
+                            </thead>
+                            <tbody>
+                              <tr>
                                 <td>
                                     <div id="ביגוד" class="selectType">
                                         <img src="../../images/clothes icon.png" />
@@ -314,10 +313,13 @@
                                     </div>
                                 </td>
                             </tr>
+                            </tbody>
+                            
                         </table>
                     </div>
                 </div>
                 <div class="col-md-6">
+                  <div>
                     <p>:אנא מלא את פרטי מבקש הסיוע</p>
                     <div class="form-group">
                         <input id="nameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
@@ -355,9 +357,14 @@
                     <div class="form-group">
                       <input type="submit" name="btnSubmit" class="btnContact" value="שלח פנייה" />
                     </div>
+                  </div>
                 </div>
+            </div>
+            <div class="row">
+              <div class="col-12"><div class="elderToMap"><a href="#">או לחילופין, ברשותך לצפות באירועי עמותות ולהצטרף אליהן</a></div></div>
             </div>
         </form>
     </div>
+  </div>
 </body>
 </html>

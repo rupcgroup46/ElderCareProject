@@ -8,10 +8,17 @@
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
   <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
   <link href="../../CSS/dataTable.css" rel="stylesheet" />
-
+  <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
   <script>
     $(document).ready(function () {
-
+      fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${sessionStorage.getItem("association_id")}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+      })
+        .then(response => response.json())
+        .then(backdata => document.getElementById('assoName').innerHTML = backdata[0].name)
       //Get All New Applications data for a specific association
       fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
         method: 'GET',
@@ -187,6 +194,11 @@
   </script>
 </head>
 <body>
+  <ul class="header">
+    <li class="brandName">ElderCare</li>
+    <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
+  </ul>
+  <div>
     <ul>
         <li><a class="active" href="NewApps-Association.html">פניות חדשות</a></li>
         <li><a href="AllApps-Association.html">כלל הפניות</a></li>
@@ -194,9 +206,6 @@
         <li><a href="Events.html">אירועים</a></li>
         <li class="logOut"><a href="AssoLogin.html">התנתק</a></li>
     </ul>
-    <!-- <div>
-        <h2>פניות חדשות</h2>
-    </div> -->
     <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>
@@ -212,5 +221,11 @@
             </tr>
         </thead>
     </table>
+  </div>
+    
+    <!-- <div>
+        <h2>פניות חדשות</h2>
+    </div> -->
+    
 </body>
 </html>

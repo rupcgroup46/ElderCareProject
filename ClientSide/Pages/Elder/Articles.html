@@ -1,131 +1,148 @@
-﻿<html>
+﻿<!DOCTYPE html>
+<html>
+
 <head>
-    <title>Elder Fitness Tips</title>
-    <style>
-        /* Set the font and background color */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f2f2f2;
-            direction: rtl;
+  <title>Elder Fitness Tips</title>
+  <meta charset="utf-8" />
+  <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <link href="../../CSS/AssociationCSS/Events.css" rel="stylesheet" />
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <!-- Google maps Script -->
+  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD41rF3_V7ugq_PTYoII9vahaZyq0aCgfg&callback=initMap&libraries=places&language=iw"
+    async defer></script>
+  <script>
+    function initMap() {
+        var options = {
+          zoom: 8,
+          center:{ lat: 31.747041, lng: 34.988099 }
         }
 
-        /* Style the header */
-        header {
-            text-align: center;
-            padding: 30px 0;
-            background-color: #44444463;
-        }
+        var map = new google.maps.Map(document.getElementById("map"), options);
 
-            header h1 {
-                font-size: 36px;
-                margin: 0;
+        // Initialize the search box
+        var input = document.getElementById("searchInput");
+        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        
+        var autocomplete = new google.maps.places.Autocomplete(input);
+        autocomplete.bindTo('bounds', map);
+
+        var infowindow = new google.maps.InfoWindow();
+        var marker = new google.maps.Marker({
+          map: map,
+          anchorPoint: new google.maps.Point(0, -29)
+        });
+
+        autocomplete.addListener('place_changed', function () {
+          infowindow.close();
+          marker.setVisible(false);
+          var place = autocomplete.getPlace();
+          if (!place.geometry) {
+            window.alert("Autocomplete's returned place contains no geometry");
+            return;
+          }
+
+          // If the place has a geometry, then present it on a map.
+          if (place.geometry.viewport) {
+            map.fitBounds(place.geometry.viewport);
+          } else {
+            map.setCenter(place.geometry.location);
+            map.setZoom(17);
+          }
+          marker.setIcon(({
+            url: place.icon,
+            size: new google.maps.Size(71, 71),
+            origin: new google.maps.Point(0, 0),
+            anchor: new google.maps.Point(17, 34),
+            scaledSize: new google.maps.Size(35, 35)
+          }));
+          marker.setPosition(place.geometry.location);
+          marker.setVisible(true);
+
+          var address = '';
+          if (place.address_components) {
+            address = [
+              (place.address_components[0] && place.address_components[0].short_name || ''),
+              (place.address_components[1] && place.address_components[1].short_name || ''),
+              (place.address_components[2] && place.address_components[2].short_name || '')
+            ].join(' ');
+            console.log(place.formatted_address)
+            console.log(place.geometry.location.lat())
+            console.log(place.geometry.location.lng())
+
+            latt = place.geometry.location.lat()
+            lngg = place.geometry.location.lng()
+            
+            new google.maps.Marker({
+              position: { lat: latt, lng: lngg },
+              map,
+              title: place.formatted_address,
+            });
+          }
+
+          infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
+          infowindow.open(map, marker);
+
+          // Location details
+          for (var i = 0; i < place.address_components.length; i++) {
+            if (place.address_components[i].types[0] == 'postal_code') {
+              document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
             }
-
-        /* Style the main content section */
-        main {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        /* Style the article cards */
-        .card {
-            background-color: #f2f2f2;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-shadow: 2px 2px 8px #ccc;
-            margin: 10px;
-            padding: 20px;
-            text-align: right;
-            width: 100%;
-        }
-
-            .card h2 {
-                color: #333;
-                font-size: 18px;
-                margin-bottom: 10px;
+            if (place.address_components[i].types[0] == 'country') {
+              document.getElementById('country').innerHTML = place.address_components[i].long_name;
             }
-
-            .card p {
-                color: #555;
-                font-size: 14px;
-                line-height: 1.5;
-                margin-bottom: 10px;
-            }
-
-            .card a {
-                background-color: #333;
-                color: #fff;
-                display: inline-block;
-                padding: 10px 20px;
-                text-align: center;
-                text-decoration: none;
-                border-radius: 5px;
-                margin-top: 10px;
-            }
-
-                .card a:hover {
-                    background-color: #555;
-                }
-    </style>
-
+          }
+          document.getElementById('location').innerHTML = place.formatted_address;
+          document.getElementById('lat').innerHTML = place.geometry.location.lat();
+          document.getElementById('lon').innerHTML = place.geometry.location.lng();
+        });
+      }
+  </script>
 </head>
 <body>
-    <!-- Header -->
-    <header>
-        <h1>טיפים לתזונה נכונה</h1>
-    </header>
-
-    <!-- Main Content -->
-    <main>
-        <!-- Article Card 1 -->
-        <div class="card">
-            <h2>וואלה!</h2>
-            <h2>לגוף ולנפש: הטיפים שכל מי שהגיע לגיל השלישי חייב לקרוא</h2>
-            <p>
-                שילוב של פעילות גופנית ותזונה נכונה בגילים מתקדמים יכול לסייע בשמירה על אורח חיים בריא ואף לשפר את מצב הרוח. דורית שאלתיאל, דיאטנית בחברת שטראוס, מסבירה על החשיבות של פעילות גופנית ותזונה בגיל השלישי ויש גם טיפים מועילים
-            </p>
-            <a href="#">למידע נוסף</a>
+  <div id="container">
+    <div id="map"></div>
+    <div id="events" class="overflow-auto">
+      <div class="scrollable-cards">
+        <div class="card text-right">
+          <div class="card-header">
+            31/05/23
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">ערב שירה בציבור</h5>
+            <p class="card-text">בני ישראל 10, אילת</p>
+            <p class="card-text">ערב שירה בציבור ופינת כיבוד למען ניצולי השואה בחסות חברת מוסדות חנוך ותרבות באילת</p>
+            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
+          </div>
         </div>
-
-        <!-- Article Card 2 -->
-        <div class="card">
-            <h2>Mako</h2>
-            <h2>תזונה מותאמת לגיל השלישי - איך עושים את זה נכון?</h2>
-            <p>
-                בני הגיל השלישי חייבים להתאים את התזונה שלהם לשינויים העוברים על גופם. הם כבר לא יכולים לאכול הכול, והם צריכים לחשב מסלול תזונתי מחדש, כזה שישמור עליהם פיזית וקוגניטיבית ויתרום לאיכות ושמחת החיים שלהם. בדיוק בשביל זה יצאנו לפגוש את גוטה הרמן, דיאטנית קלינית באחוזת ראשונים, שנתנה לנו את כל ההמלצות לתזונה בריאה. החדשות הטובות: זה מתאים לכולם
-            </p>
-            <a href="#">למידע נוסף</a>
+        <div class="card text-right">
+          <div class="card-header">
+            10/06/23
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">חלוקת בגדים לנזקקים</h5>
+            <p class="card-text">כיכר הבימה, תל אביב</p>
+            <p class="card-text">חלוקת בגדים לנזקקים, קשי יום ודרי רחוב בחסות קרן פדנטים</p>
+            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
+          </div>
         </div>
-
-        <!-- Article Card 3 -->
-        <div class="card">
-            <h2>Ynet</h2>
-            <h2>איך תשמרו על תזונה בריאה גם בגיל השלישי</h2>
-            <p>
-                שינויים במערכת העיכול ומחסור בפעילות גופנית: הרגלי התזונה הייחודיים בקרב בני ובנות הגיל השלישי משפיעים גם על בריאות גופם וסיכוייהם לפציעות. כך תשמרו על הרגלים נכונים - אחרי גיל 60
-            </p>
-            <a href="#">למידע נוסף</a>
+        <div class="card text-right">
+          <div class="card-header">
+            20/06/23
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">חלוקת סלי מזון לקשישי עולי אתיופיה</h5>
+            <p class="card-text">הרב ריינס 23, באר שבע</p>
+            <p class="card-text">תיאור תיאור תיאור תיאור תיאור תיאור תיאור</p>
+            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
+          </div>
         </div>
-
-        <!-- Article Card 4 -->
-        <div class="card">
-            <h2>טיפ 4: הישארו מיושפעים</h2>
-            <p>
-                הישארו מיושפעים הוא חשוב לשמירה על כושר גוף וראש בתוך הגיל. נסו לשתות לפחות 8 כוסות מוים ביום ולעשות פעילויות שמעוררות את העיון, כמו לקרוא ספרים, לצפות בסרטים או לשחק במשחקים.
-            </p>
-            <a href="#">למידע נוסף</a>
-        </div>
-
-        <!-- Article Card 5 -->
-        <div class="card">
-            <h2>טיפ 5: הקפידו על קשרי חברתיים</h2>
-            <p>
-                קשרי חברתיים חשובים לשמירה על כושר גוף וראש בתוך הגיל. נסו לפעוט זמן עם חברים ומשפחה, לקשור עם קהילות ולבצע פעילויות חברתיות.
-            </p>
-            <a href="#">למידע נוסף</a>
-        </div>
-    </main>
+      </div>
+    </div>
+  </div>
+    <!-- Search input -->
+    <input id="searchInput" class="controls" type="text" placeholder="Enter a location">
 </body>
 </html>

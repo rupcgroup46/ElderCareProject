@@ -45,3 +45,14 @@ li.logOut {
   float: left;
   background-color: #80808040;
 }
+
+ul.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+}
+
+ul.header > li {
+    font-family: monospace;
+    font-size: 1.5em;
+}
