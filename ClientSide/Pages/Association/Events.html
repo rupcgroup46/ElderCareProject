@@ -7,7 +7,7 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link href="../../CSS/AssociationCSS/Events.css" rel="stylesheet" />
-
+  <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
   <!-- Google maps Script -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD41rF3_V7ugq_PTYoII9vahaZyq0aCgfg&callback=initMap&libraries=places&language=iw" async defer></script>
@@ -76,28 +76,10 @@
             latt = place.geometry.location.lat()
             lngg = place.geometry.location.lng()
             
-            // new google.maps.Marker({
-            //   position: { lat: latt, lng: lngg },
-            //   map,
-            //   title: place.formatted_address,
-            // });
           }
 
           infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
           infowindow.open(map, marker);
-
-          // Location details
-          for (var i = 0; i < place.address_components.length; i++) {
-            if (place.address_components[i].types[0] == 'postal_code') {
-              document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
-            }
-            if (place.address_components[i].types[0] == 'country') {
-              document.getElementById('country').innerHTML = place.address_components[i].long_name;
-            }
-          }
-          document.getElementById('location').innerHTML = place.formatted_address;
-          document.getElementById('lat').innerHTML = place.geometry.location.lat();
-          document.getElementById('lon').innerHTML = place.geometry.location.lng();
         });
 
         //render all events on the map
@@ -110,6 +92,7 @@
           .then(response => response.json())
           .then(data => {
             console.log("events: ",data)
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
             for (let i = 0; i < data.length; i++) {
               new google.maps.Marker({
                 position: { lat: data[i].lat, lng: data[i].lng },
@@ -118,17 +101,21 @@
                 title: data[i].name,
                 animation: google.maps.Animation.DROP,
               });
-
+              date = new Date(data[i].date)
+              day = date.getDate().toString().padStart(2, "0");
+              month = (date.getMonth() + 1).toString().padStart(2, "0");
+              year = date.getFullYear().toString().substr(-2);
+              formattedDate = `${day}/${month}/${year}`;
               var str = `
                 <div class="card text-right">
                   <div class="card-header">
-                    ${data[i].associationName} - ${data[i].date.slice(0, 10)}
+                    ${data[i].associationName} - ${formattedDate} 12:00
                   </div>
                   <div class="card-body">
                     <h5 class="card-title">${data[i].name}</h5>
                     <p class="card-text">${data[i].address}</p>
                     <p class="card-text">${data[i].description}</p>
-                    <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
+                    <p>משתתפים: ${data[i].participants}</p>
                   </div>
                 </div>`;
                 document.querySelector('.scrollable-cards').insertAdjacentHTML('beforeend', str)
@@ -141,6 +128,14 @@
 
 
       $(document).ready(function() {
+        fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${sessionStorage.getItem("association_id")}`, {
+          method: 'GET',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+        })
+        .then(response => response.json())
+        .then(backdata => document.getElementById('assoName').innerHTML = backdata[0].name)
         document.getElementById("btnShowEvents").addEventListener("click", function() {
           document.getElementById("newEvent").style.display = "none";
           document.getElementById("events").style.display = "flex";
@@ -192,6 +187,10 @@
   </script>
 </head>
 <body>
+  <ul class="header">
+    <li class="brandName">ElderCare</li>
+    <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
+  </ul>
 <div>
   <ul>
     <li><a href="NewApps-Association.html">פניות חדשות</a></li>
@@ -227,56 +226,12 @@
         </div>
       </form>
     </div>
-    <div id="events" class="container overflow-auto ">
+    <div id="events" class="container overflow-auto" style="display:none">
       <div class="scrollable-cards">
-        <!-- <div class="card text-right">
-          <div class="card-header">
-            31/05/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">ערב שירה בציבור</h5>
-            <p class="card-text">בני ישראל 10, אילת</p>
-            <p class="card-text">ערב שירה בציבור ופינת כיבוד למען ניצולי השואה בחסות חברת מוסדות חנוך ותרבות באילת</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
-        </div>
-        <div class="card text-right">
-          <div class="card-header">
-            10/06/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">חלוקת בגדים לנזקקים</h5>
-            <p class="card-text">כיכר הבימה, תל אביב</p>
-            <p class="card-text">חלוקת בגדים לנזקקים, קשי יום ודרי רחוב בחסות קרן פדנטים</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
-        </div>
-        <div class="card text-right">
-          <div class="card-header">
-            20/06/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">חלוקת סלי מזון לקשישי עולי אתיופיה</h5>
-            <p class="card-text">הרב ריינס 23, באר שבע</p>
-            <p class="card-text">תיאור תיאור תיאור תיאור תיאור תיאור תיאור</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
-        </div> -->
       </div>
-      <input type="button" id="btnNewEvent" class="btnContact" value="צפה באירועים קיימים" placeholder="">
+      <div class="addNewEventDiv"><button id="btnNewEvent" class="btn btnContact">יצירת אירוע חדש</button></div>
     </div>
   </div>
-<!-- Search input -->
-<!-- <input id="searchInput" class="controls" type="text" placeholder="Enter a location"> -->
-
-<!-- Display geolocation data -->
-<!-- <ul class="geo-data">
-  <li>Full Address: <span id="location"></span></li>
-  <li>Postal Code: <span id="postal_code"></span></li>
-  <li>Country: <span id="country"></span></li>
-  <li>Latitude: <span id="lat"></span></li>
-  <li>Longitude: <span id="lon"></span></li>
-</ul> -->
 </div>
 </body>
 </html>

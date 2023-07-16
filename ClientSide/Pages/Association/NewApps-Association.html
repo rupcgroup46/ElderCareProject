@@ -7,6 +7,16 @@
     integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
   <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+  <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.1/underscore-min.js"></script>
+  <!-- Include SweetAlert JavaScript&CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
   <link href="../../CSS/dataTable.css" rel="stylesheet" />
   <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
   <script>
@@ -19,6 +29,7 @@
       })
         .then(response => response.json())
         .then(backdata => document.getElementById('assoName').innerHTML = backdata[0].name)
+
       //Get All New Applications data for a specific association
       fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
         method: 'GET',
@@ -34,6 +45,15 @@
             table = $("#appsTable").dataTable({
               data: data,
               pageLength: 10,
+              dom: 'Bfrtip',
+              buttons: [
+                  'copy', 'csv', 'excel', 'pdf', 'print'
+              ],
+              "columnDefs": [
+                {
+                  className: "dt-head-right", targets: [ 0, 1, 2,3,4,5,6,7,8,9 ] 
+                }
+              ],
               columns: [
                 {
                   data: "id",
@@ -56,6 +76,7 @@
                 },
                 {
                   data: "relativeNum",
+                  orderable:false,
                   render: function (data, type, row, meta) {
                     if (row.relativeNum == "null") {
                       return "-";
@@ -67,6 +88,7 @@
                 },
                 {
                   data: "relativeName",
+                  orderable:false,
                   render: function (data, type, row, meta) {
                     if (row.relativeName == "null") {
                       return "-";
@@ -78,16 +100,30 @@
                 },
                 { data: "helpType" },
                 { data: "city" },
-                { data: "phoneNum" },
-                { data: "name" },
+                { data: "phoneNum",orderable:false },
+                { data: "name",orderable:false },
                 {
                   data: "startDate",
                   render: function (data, type, row, meta) {
-                    return row.startDate.slice(0, 10);
+                    date = new Date(row.startDate)
+                    day = date.getDate().toString().padStart(2, "0");
+                    month = (date.getMonth() + 1).toString().padStart(2, "0");
+                    year = date.getFullYear().toString().substr(-2);
+                    formattedDate = `${day}/${month}/${year}`;
+                    return formattedDate;
                   }
                 },
                 { data: "id" }
               ],
+              createdRow: function (row, data, dataIndex) {
+                  var startDate = data.startDate;
+                  var today = new Date();
+                  var daysDiff = Math.round((today.getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24));
+
+                  if (daysDiff > 15) { //if it's been 15 days since the app was created, highlight it
+                    $(row).addClass("over-15");
+                  }
+                }
             });
           }
           catch (err) {
@@ -186,7 +222,10 @@
           .then(response => response.json())
           .then(data => {
             console.log("Application was updated: ", data)
-            alert("סטטוס הבקשה שונה בהצלחה")
+            Swal.fire({
+              title: 'סטטוס הבקשה שונה בהצלחה!',
+              icon: 'success'
+            })
           })
           .catch(error => console.error(error));
       });
@@ -195,7 +234,7 @@
 </head>
 <body>
   <ul class="header">
-    <li class="brandName">ElderCare</li>
+    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
     <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
   </ul>
   <div>

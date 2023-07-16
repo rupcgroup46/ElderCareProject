@@ -2,13 +2,18 @@
 <html>
 
 <head>
-  <title>Elder Fitness Tips</title>
+  <title>Events</title>
   <meta charset="utf-8" />
   <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
   <link href="../../CSS/AssociationCSS/Events.css" rel="stylesheet" />
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+  <!-- Include SweetAlert JavaScript&CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+
+  <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
   <!-- Google maps Script -->
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD41rF3_V7ugq_PTYoII9vahaZyq0aCgfg&callback=initMap&libraries=places&language=iw"
@@ -24,7 +29,7 @@
 
         // Initialize the search box
         var input = document.getElementById("searchInput");
-        // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
         
         var autocomplete = new google.maps.places.Autocomplete(input);
         autocomplete.bindTo('bounds', map);
@@ -84,65 +89,68 @@
 
           infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
           infowindow.open(map, marker);
-
-          // Location details
-          for (var i = 0; i < place.address_components.length; i++) {
-            if (place.address_components[i].types[0] == 'postal_code') {
-              document.getElementById('postal_code').innerHTML = place.address_components[i].long_name;
-            }
-            if (place.address_components[i].types[0] == 'country') {
-              document.getElementById('country').innerHTML = place.address_components[i].long_name;
-            }
-          }
-          document.getElementById('location').innerHTML = place.formatted_address;
-          document.getElementById('lat').innerHTML = place.geometry.location.lat();
-          document.getElementById('lon').innerHTML = place.geometry.location.lng();
         });
+        //render all events on the map
+        fetch('https://localhost:7241/api/Events', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+          .then(response => response.json())
+          .then(data => {
+            console.log("events: ",data)
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
+            for (let i = 0; i < data.length; i++) {
+              new google.maps.Marker({
+                position: { lat: data[i].lat, lng: data[i].lng },
+                map,
+                label: i+1,
+                title: data[i].name,
+                animation: google.maps.Animation.DROP,
+              });
+              date = new Date(data[i].date)
+              day = date.getDate().toString().padStart(2, "0");
+              month = (date.getMonth() + 1).toString().padStart(2, "0");
+              year = date.getFullYear().toString().substr(-2);
+              formattedDate = `${day}/${month}/${year}`;
+              var str = `
+                <div class="card text-right">
+                  <div class="card-header">
+                    ${data[i].associationName} - ${formattedDate} 12:00
+                  </div>
+                  <div class="card-body">
+                    <h5 class="card-title">${data[i].name}</h5>
+                    <p class="card-text">${data[i].address}</p>
+                    <p class="card-text">${data[i].description}</p>
+                    <p>משתתפים: ${data[i].participants}</p>
+                  </div>
+                </div>`;
+                document.querySelector('.scrollable-cards').insertAdjacentHTML('beforeend', str)
+            }
+          })
       }
   </script>
 </head>
 <body>
-  <div id="container">
-    <div id="map"></div>
-    <div id="events" class="overflow-auto">
-      <div class="scrollable-cards">
-        <div class="card text-right">
-          <div class="card-header">
-            31/05/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">ערב שירה בציבור</h5>
-            <p class="card-text">בני ישראל 10, אילת</p>
-            <p class="card-text">ערב שירה בציבור ופינת כיבוד למען ניצולי השואה בחסות חברת מוסדות חנוך ותרבות באילת</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
+  <ul>
+    <li><a href="AllApps-Admin.html">כלל הפניות</a></li>
+    <li><a href="NewApps-Admin.html">פניות חדשות</a></li>
+    <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
+    <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
+    <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
+    <li><a class="active" href="Events.html">אירועים</a></li>
+    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
+</ul>
+  <div>
+    <div id="container">
+      <div id="map"></div>
+      <div id="events" class="container overflow-auto ">
+        <div class="scrollable-cards">
         </div>
-        <div class="card text-right">
-          <div class="card-header">
-            10/06/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">חלוקת בגדים לנזקקים</h5>
-            <p class="card-text">כיכר הבימה, תל אביב</p>
-            <p class="card-text">חלוקת בגדים לנזקקים, קשי יום ודרי רחוב בחסות קרן פדנטים</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
-        </div>
-        <div class="card text-right">
-          <div class="card-header">
-            20/06/23
-          </div>
-          <div class="card-body">
-            <h5 class="card-title">חלוקת סלי מזון לקשישי עולי אתיופיה</h5>
-            <p class="card-text">הרב ריינס 23, באר שבע</p>
-            <p class="card-text">תיאור תיאור תיאור תיאור תיאור תיאור תיאור</p>
-            <a href="#" class="btn btn-primary">הצטרף לאירוע</a>
-          </div>
-        </div>
+        <input id="searchInput" class="controls" type="text" placeholder="Enter a location">
       </div>
     </div>
   </div>
-    <!-- Search input -->
-    <input id="searchInput" class="controls" type="text" placeholder="Enter a location">
 </body>
 </html>

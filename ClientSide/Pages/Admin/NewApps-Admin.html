@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>New Applications - Admin</title>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
             integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
             crossorigin="anonymous"></script>
@@ -101,7 +101,7 @@
                     var daysDiff = Math.round((today.getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24));
 
                     if (daysDiff > 15) { //if it's been 15 days since the app was created, highlight it
-                      $(row).addClass("over-10");
+                      $(row).addClass("over-15");
                     }
                   }
               });
@@ -313,12 +313,14 @@
     </script>
 </head>
 <body>
-    <ul>
+    <ul class="">
         <li><a href="AllApps-Admin.html">כלל הפניות</a></li>
         <li><a class="active" href="NewApps-Admin.html">פניות חדשות</a></li>
         <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
         <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
         <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
+        <li><a href="Events.html">אירועים</a></li>
+        <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
     </ul>
     <table id="appsTable" class="display" style="width:100%">
         <thead>

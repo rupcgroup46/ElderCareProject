@@ -194,4 +194,64 @@ div#events {
   flex-direction: column;
 }
 
+.lower {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: space-between;
+  align-items: baseline;
+}
 
+.addNewEventDiv {
+  width: 100%;
+  border-radius: 10px;
+  background-color: #f7f7f7;
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+button#btnNewEvent {
+  width: 100%;
+  border-radius: 10px;
+  font-weight: 500;
+  color: white;
+  background-color: #83c4f8;
+}
+
+ul.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+  align-items: center;
+}
+
+ul.header > li.brandName {
+    font-family: monospace;
+    font-size: 19px;
+    color: #666666;
+}
+
+ul.header > li.associationName {
+  font-family: arial;
+  font-size: 19px;
+  color: #666666;
+  display: flex;
+  align-items: center;
+}
+
+i.fa-location-dot {
+  padding-left: 10px;
+}
+
+#assoName {
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.logoImg {
+  width:160px;
+}
+
+li.brandName {
+  float: left;
+}
