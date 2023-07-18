@@ -2,13 +2,16 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Application</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <link href="../../CSS/ElderCSS/App-Elder.css" rel="stylesheet" />
+    <!-- Include SweetAlert JavaScript&CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
     <script>
 
@@ -59,7 +62,10 @@
         //form submit
         $("#helpRequest").submit(function(){
           if (selectedDivs.length == 0) {
-            alert("יש לבחור תחום סיוע נדרש");
+            Swal.fire({
+              title: 'יש לבחור סוג סיוע נדרש',
+              icon: 'error',
+            })
             return false;
           }
           
@@ -115,17 +121,17 @@
             })
               .then(response => response.json())
               .then(associations => {
-                console.log("all relevant associations: ", associations);
-                associations.sort((a, b) => b.helpingRatio - a.helpingRatio);
+                console.log("all relevant associations: ", associations); //all associations
+                associations.sort((a, b) => b.helpingRatio - a.helpingRatio); //sort by helping ratio
                 console.log("sorted relevant associations: ", associations);
-                var topTwoAssociations = associations.slice(0, 2);
+                var topTwoAssociations = associations.slice(0, 2); //take the top 2
                 var remainingAssociations = associations.slice(2);
-                var shuffledAssociations = remainingAssociations.sort(() => Math.random() - 0.5);
-                var randomAssociations = shuffledAssociations.slice(0, 3);
-                var combinedAssociations = [...topTwoAssociations, ...randomAssociations];
+                var shuffledAssociations = remainingAssociations.sort(() => Math.random() - 0.5); //shuffle the rest
+                var randomAssociations = shuffledAssociations.slice(0, 3); //take random 3
+                var combinedAssociations = [...topTwoAssociations, ...randomAssociations]; //combine into 5 
                 console.log("chosen: ", combinedAssociations);
                 for (let i = 0; i < combinedAssociations.length; i++) {
-
+                  localStorage.setItem(combinedAssociations[i].id, 'שים לב, התקבלה פנייה חדשה')
                   //GET association's details
                   fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${combinedAssociations[i].id}`, {
                     method: 'GET',
@@ -180,7 +186,11 @@
                 if (chosenAssociationsStr == ""){
                   status = "לא נמצאה עמותה";
                   endDate = today;
-                  alert("לא נמצאו עמותות מתאימות");
+                  Swal.fire({
+                    title: 'מצטערים אך לא נמצאו עמותות העונות לצרכים שלכם',
+                    text: 'אנא נסו ליצור קשר עם משרד הרווחה באזור מגוריכם',
+                    icon: 'error',
+                  })
                 }
                 
                 //Create new application object
@@ -209,7 +219,14 @@
               .then(response => response.json())
               .then(data => {
                 console.log("Application Was Added: ", data)
-                window.location.href='AppSubmit.html';
+                Swal.fire({
+                  title: 'בקשתך התקבלה',
+                  icon: 'success',
+                })
+                .then((result) => {
+                  if (result.isConfirmed)
+                    window.location.href = "landingPage.html";
+                })
               })
               .catch(error => console.error(error));
           }
@@ -260,8 +277,7 @@
 <body>
   <div id="container">
     <div class="header">
-      <h1>ElderCare</h1>
-      <p>חיבור בין קשישים לעמותות הסיוע</p>
+      <img src="../../images/simpleLogo.jpg">
     </div>
     <div class="contact-form">
         <form id="helpRequest">
@@ -359,9 +375,6 @@
                     </div>
                   </div>
                 </div>
-            </div>
-            <div class="row">
-              <div class="col-12"><div class="elderToMap"><a href="#">או לחילופין, ברשותך לצפות באירועי עמותות ולהצטרף אליהן</a></div></div>
             </div>
         </form>
     </div>

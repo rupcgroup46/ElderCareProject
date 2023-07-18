@@ -91,7 +91,7 @@
           infowindow.open(map, marker);
         });
         //render all events on the map
-        fetch('https://localhost:7241/api/Events', {
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Events', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -146,7 +146,7 @@
                 name: selectedEvent.name,
                 participants: selectedEvent.participants+1
               }
-              fetch(`https://localhost:7241/api/Events`, {
+              fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Events`, {
                 method: 'PUT',
                 headers: {
                   'Content-Type': 'application/json'
@@ -170,7 +170,7 @@
 </head>
 <body>
   <ul class="header">
-    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
+    <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     <li class="associationName"><p id="assoName">אירועים</p><i class="fa-sharp fa-solid fa-location-dot"></i></li>
   </ul>
   <div>

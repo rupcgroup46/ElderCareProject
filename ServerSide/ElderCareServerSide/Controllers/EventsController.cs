@@ -12,9 +12,10 @@ namespace ElderCareServerSide.Controllers
     {
         // GET: api/<EventsController>
         [HttpGet]
-        public IEnumerable<Eventt> Get()
+        public Object Get()
         {
-            return Eventt.ReadAll();
+            Eventt e = new Eventt();
+            return e.ReadAll();
         }
 
         // GET api/<EventsController>/5
@@ -36,9 +37,14 @@ namespace ElderCareServerSide.Controllers
         }
 
         // PUT api/<EventsController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut]
+        public IActionResult Put([FromBody] Eventt e)
         {
+            int numEffected = e.Update();
+            if (numEffected == 1)
+                return Ok(e);
+            else
+                return NotFound("event was not found");
         }
 
         // DELETE api/<EventsController>/5

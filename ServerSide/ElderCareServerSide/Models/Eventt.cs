@@ -10,11 +10,11 @@
         public decimal Lng { get; set; }
         public DateTime Date { get; set; }
         public int AssociationId { get; set; }
-        public string HelipingAssociations { get; set; }
+        public string HelpingAssociations { get; set; }
         public int Participants { get; set; }
 
 
-        public static List<Eventt> ReadAll()
+        public Object ReadAll()
         {
             DBservices dbs = new DBservices();
             return dbs.ReadEvents();
@@ -24,6 +24,12 @@
         {
             DBservices dbs = new DBservices();
             return dbs.InsertEvent(this);
+        }
+
+        public int Update()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.UpdateEvent(this);
         }
     }
 }

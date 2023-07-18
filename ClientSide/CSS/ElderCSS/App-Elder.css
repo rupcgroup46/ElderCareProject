@@ -1,12 +1,12 @@
 .contact-form {
-  /* background: #fff; */
-  /* margin-top: 10%; */
   margin-bottom: 5%;
-  /*width: 70%;*/
+  display: flex;
+  justify-content: center;
 }
 
-form#helpRequest {
-  height: 418px;
+body {
+  background-image: url('../../images/background1.jpg');
+
 }
 
   .contact-form .form-control {
@@ -25,14 +25,14 @@ form#helpRequest {
   }
 
   .contact-form form {
-    padding: 14%;
-    padding-top: 25px;
+    padding: 20px;
     border-radius: 50px;
     border: 2px solid #fff;
     background-color: #fff;
     font-size: 20px;
     font-family: system-ui;
     font-weight: 600;
+    width:90%;
 }
 
   /* .contact-form form .row {
@@ -43,7 +43,7 @@ form#helpRequest {
   margin-bottom: 8%;
   margin-top: -10%;
   text-align: center;
-  color: #0062cc;
+  color: #2196f38f;
 }
 
 .contact-form .btnContact {
@@ -51,7 +51,7 @@ form#helpRequest {
   border: none;
   border-radius: 1rem;
   padding: 1.5%;
-  background: #dc3545;
+  background: #2196f38f;
   font-weight: 600;
   color: #fff;
   cursor: pointer;
@@ -62,7 +62,7 @@ form#helpRequest {
   border-radius: 1rem;
   padding: 1.5%;
   color: #fff;
-  background-color: #0062cc;
+  background-color: #2196f38f;
   border: none;
   cursor: pointer;
 }
@@ -119,4 +119,10 @@ th {
 .header > h1 {
   font-family:cursive;
   font-size:4rem
+}
+
+.header > img {
+  width: 325px;
+  margin-bottom: 15px;
+  margin-top: 15px;
 }

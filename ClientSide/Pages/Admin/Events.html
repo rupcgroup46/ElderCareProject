@@ -73,25 +73,14 @@
               (place.address_components[1] && place.address_components[1].short_name || ''),
               (place.address_components[2] && place.address_components[2].short_name || '')
             ].join(' ');
-            console.log(place.formatted_address)
-            console.log(place.geometry.location.lat())
-            console.log(place.geometry.location.lng())
-
-            latt = place.geometry.location.lat()
-            lngg = place.geometry.location.lng()
-            
-            new google.maps.Marker({
-              position: { lat: latt, lng: lngg },
-              map,
-              title: place.formatted_address,
-            });
           }
 
           infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
           infowindow.open(map, marker);
         });
+
         //render all events on the map
-        fetch('https://localhost:7241/api/Events', {
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Events', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -126,7 +115,7 @@
                     <p>משתתפים: ${data[i].participants}</p>
                   </div>
                 </div>`;
-                document.querySelector('.scrollable-cards').insertAdjacentHTML('beforeend', str)
+              document.querySelector('.scrollable-cards').insertAdjacentHTML('beforeend', str)
             }
           })
       }
@@ -140,7 +129,7 @@
     <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
     <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
     <li><a class="active" href="Events.html">אירועים</a></li>
-    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
+    <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
 </ul>
   <div>
     <div id="container">

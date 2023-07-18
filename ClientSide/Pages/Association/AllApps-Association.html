@@ -162,8 +162,8 @@
           },
         })
           .then(response => response.json())
-          .then(data => {
-            tmpApp = data;
+          .then(app => {
+            tmpApp = app;
             return tmpApp;
           })
           .then(tmpApp => {
@@ -179,8 +179,8 @@
                 },
               })
                 .then(response => response.json())
-                .then(data => {
-                  tmpAssociation = data;
+                .then(db => {
+                  tmpAssociation = db;
                   return tmpAssociation;
                 })
                 .then(tmpAssociation => {
@@ -208,7 +208,7 @@
                   })
                 })
                 .then(response => response.json())
-                .then(data => console.log("Association was updated: ", data))
+                .then(dbb => console.log("Association was updated: ", dbb))
                 .catch(error => console.error(error));
             }
 
@@ -237,8 +237,8 @@
             })
           })
           .then(response => response.json())
-          .then(data => {
-            console.log("Application was updated: ", data)
+          .then(backdata => {
+            console.log("Application was updated: ", backdata)
             Swal.fire({
               title: 'סטטוס הבקשה שונה בהצלחה!',
               icon: 'success'
@@ -252,7 +252,7 @@
 
 <body>
   <ul class="header">
-    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
+    <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
   </ul>
   <div><ul>

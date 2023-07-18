@@ -11,6 +11,9 @@
   <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
   <!-- Google maps Script -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD41rF3_V7ugq_PTYoII9vahaZyq0aCgfg&callback=initMap&libraries=places&language=iw" async defer></script>
+  <!-- Include SweetAlert JavaScript&CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
   <script>
     var latt = '';
@@ -75,7 +78,6 @@
 
             latt = place.geometry.location.lat()
             lngg = place.geometry.location.lng()
-            
           }
 
           infowindow.setContent('<div><strong>' + place.name + '</strong><br>' + address);
@@ -83,7 +85,7 @@
         });
 
         //render all events on the map
-        fetch('https://localhost:7241/api/Events', {
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Events', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json'
@@ -168,7 +170,7 @@
           console.log("New Event: ",newEvent);
 
           // POST the new elder object
-          fetch('https://localhost:7241/api/Events', {
+          fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Events', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -176,7 +178,13 @@
             body: JSON.stringify(newEvent)
           })
             .then(response => response.json())
-            .then(data => console.log("Event Was Added: ",data))
+            .then(data => {
+              console.log("Event Was Added: ",data)
+              Swal.fire({
+                title: 'אירוע חדש התווסף למערכת',
+                icon: 'success'
+              })
+            })
             .catch(error => console.error("Error: ",error));
 
           return false;
@@ -188,7 +196,7 @@
 </head>
 <body>
   <ul class="header">
-    <li class="brandName">ElderCare</li>
+    <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
   </ul>
 <div>

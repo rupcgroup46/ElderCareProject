@@ -9,6 +9,7 @@ using System.Runtime.Intrinsics.X86;
 using ElderCareServerSide.Models;
 using System.ComponentModel.Design;
 using System.Runtime.ConstrainedExecution;
+using System.Xml.Linq;
 //using static System.Net.Mime.MediaTypeNames;
 
 /// <summary>
@@ -150,7 +151,7 @@ public class DBservices
     //--------------------------------------------------------------------------------------------------
     // This method reads all the events
     //--------------------------------------------------------------------------------------------------
-    public List<Eventt> ReadEvents()
+    public List<Object> ReadEvents()
     {
 
         SqlConnection con;
@@ -172,25 +173,26 @@ public class DBservices
 
         try
         {
-            List<Eventt> list = new List<Eventt>();
+            List<Object> list = new List<Object>();
 
             SqlDataReader dataReader = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             while (dataReader.Read())
             {
-                Eventt eventt = new Eventt();
-                eventt.EventId = Convert.ToInt32(dataReader["EventId"]);
-                eventt.Name = dataReader["Name"].ToString();
-                eventt.Description = dataReader["Description"].ToString();
-                eventt.Address = dataReader["Address"].ToString();
-                eventt.Lat = Convert.ToDecimal(dataReader["Lat"]);
-                eventt.Lng = Convert.ToDecimal(dataReader["Lng"]);
-                eventt.Date = Convert.ToDateTime(dataReader["date"]);
-                eventt.AssociationId = Convert.ToInt32(dataReader["AssociationId"]);
-                eventt.HelipingAssociations = dataReader["HelipingAssociations"].ToString();
-                eventt.Participants = Convert.ToInt32(dataReader["Participants"]);
-
-                list.Add(eventt);
+                list.Add(new
+                {
+                    eventId = Convert.ToInt32(dataReader["EventId"]),
+                    name = dataReader["Name"].ToString(),
+                    description = dataReader["Description"].ToString(),
+                    address = dataReader["Address"].ToString(),
+                    lat = Convert.ToDecimal(dataReader["Lat"]),
+                    lng = Convert.ToDecimal(dataReader["Lng"]),
+                    date = Convert.ToDateTime(dataReader["date"]),
+                    associationId = Convert.ToInt32(dataReader["AssociationId"]),
+                    associationName = dataReader["Association_Name"].ToString(),
+                    helpingAssociations = dataReader["HelpingAssociations"].ToString(),
+                    participants = Convert.ToInt32(dataReader["Participants"]),
+                });
             }
 
             return list;
@@ -252,7 +254,7 @@ public class DBservices
                 application.EndDate = Convert.ToDateTime(dataReader["EndDate"]);
                 application.ElderID = Convert.ToInt32(dataReader["ElderID"]);
                 application.HandlingAssociationID = Convert.ToInt32(dataReader["HandlingAssociationID"]);
-                application.SentAssociationsID = dataReader["ElderID"].ToString();
+                application.SentAssociationsID = dataReader["SentAssociationsID"].ToString();
 
                 applicationList.Add(application);
             }
@@ -486,6 +488,7 @@ public class DBservices
                 newAppsList.Add(new
                 {
                     id = Convert.ToInt32(dataReader["ID"].ToString()),
+                    elderId = Convert.ToInt32(dataReader["elderId"].ToString()),
                     startDate = Convert.ToDateTime(dataReader["StartDate"].ToString()),
                     name = dataReader["Name"].ToString(),
                     phoneNum = dataReader["PhoneNum"].ToString(),
@@ -866,6 +869,7 @@ public class DBservices
                     relativeName = dataReader["RelativeName"].ToString(),
                     relativeNum = dataReader["RelativeNum"].ToString(),
                     status = dataReader["status"].ToString(),
+                    sentAssociationsID = dataReader["SentAssociationsID"].ToString(),
                 });
             }
 
@@ -928,6 +932,7 @@ public class DBservices
                     relativeName = dataReader["RelativeName"].ToString(),
                     relativeNum = dataReader["RelativeNum"].ToString(),
                     status = dataReader["status"].ToString(),
+                    sentAssociationsID = dataReader["SentAssociationsID"].ToString(),
                 });
             }
 
@@ -1191,6 +1196,51 @@ public class DBservices
 
     }
 
+    //--------------------------------------------------------------------------------------------------
+    // This method updated an event
+    //--------------------------------------------------------------------------------------------------
+    public int UpdateEvent(Eventt e)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("myProjDB"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        //String cStr = BuildUpdateCommand(student); // helper method to build the insert string
+
+        cmd = CreateUpdateEventSP("spUpdateEvent", con, e); // create the command
+
+        try
+        {
+            int numEffected = cmd.ExecuteNonQuery(); // execute the command
+            return numEffected;
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+    }
+
     //---------------------------------------------------------------------------------
     // Create the insert elder command using a stored procedure
     //---------------------------------------------------------------------------------
@@ -1381,6 +1431,36 @@ public class DBservices
     }
 
     //---------------------------------------------------------------------------------
+    // Create the update association command using a stored procedure
+    //---------------------------------------------------------------------------------
+    private SqlCommand CreateUpdateEventSP(String spProcedure, SqlConnection con, Eventt e)
+    {
+
+        SqlCommand cmd = new SqlCommand(); // create the command object
+
+        cmd.Connection = con;              // assign the connection to the command object
+
+        cmd.CommandText = spProcedure;      // can be Select, Insert, Update, Delete 
+
+        cmd.CommandTimeout = 10;           // Time to wait for the execution' The default is 30 seconds
+
+        cmd.CommandType = System.Data.CommandType.StoredProcedure; // the type of the command, can also be stored procedure
+
+        cmd.Parameters.AddWithValue("@eventId", e.EventId);
+        cmd.Parameters.AddWithValue("@name", e.Name);
+        cmd.Parameters.AddWithValue("@address", e.Address);
+        cmd.Parameters.AddWithValue("@associationId", e.AssociationId);
+        cmd.Parameters.AddWithValue("@date", e.Date);
+        cmd.Parameters.AddWithValue("@description", e.Description);
+        cmd.Parameters.AddWithValue("@helpingAssociations", e.HelpingAssociations);
+        cmd.Parameters.AddWithValue("@lat", e.Lat);
+        cmd.Parameters.AddWithValue("@lng", e.Lng);
+        cmd.Parameters.AddWithValue("@participants", e.Participants);
+
+        return cmd;
+    }
+
+    //---------------------------------------------------------------------------------
     // Create the insert application command using a stored procedure
     //---------------------------------------------------------------------------------
     private SqlCommand CreateInsertApplicationCommandSP(String spInsertApplication, SqlConnection con, Application application)
@@ -1432,7 +1512,7 @@ public class DBservices
         cmd.Parameters.AddWithValue("@lng", eventt.Lng);
         cmd.Parameters.AddWithValue("@date", eventt.Date);
         cmd.Parameters.AddWithValue("@associationId", eventt.AssociationId);
-        cmd.Parameters.AddWithValue("@helpingAssociations", eventt.HelipingAssociations);
+        cmd.Parameters.AddWithValue("@helpingAssociations", eventt.HelpingAssociations);
         cmd.Parameters.AddWithValue("@participants", eventt.Participants);
 
         return cmd;

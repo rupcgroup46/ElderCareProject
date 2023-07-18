@@ -1,6 +1,6 @@
 .contact-form {
   background: #fff;
-  margin-top: 10%;
+  /* margin-top: 10%; */
   margin-bottom: 5%;
 }
 
@@ -20,7 +20,7 @@
   }
 
 .contact-form form {
-  padding: 14%;
+  /* padding: 14%; */
   padding-top:0px;
 }
 
@@ -32,7 +32,7 @@
   margin-bottom: 8%;
   margin-top: -10%;
   text-align: center;
-  color: #0062cc;
+  color: #2196f38f;
 }
 
 .contact-form .btnContact {
@@ -40,7 +40,7 @@
   border: none;
   border-radius: 1rem;
   padding: 1.5%;
-  background: #dc3545;
+  background: #2196f38f;
   font-weight: 600;
   color: #fff;
   cursor: pointer;
@@ -51,7 +51,7 @@
   border-radius: 1rem;
   padding: 1.5%;
   color: #fff;
-  background-color: #0062cc;
+  background-color: #2196f38f;
   border: none;
   cursor: pointer;
 }
@@ -89,9 +89,26 @@ height: 50vh;
 .contact-form {
 max-width: 500px;
 width: 100%;
+border-radius:50px;
 }
 
 h5 {
 width:350px;
 margin-bottom:25px;
+}
+
+body {
+  background-image: url('../../images/background1.jpg');
+  background-size: cover;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+div.header > img {
+  width: 325px;
+  margin-top: 15px;
+  margin-bottom: 15px;
 }

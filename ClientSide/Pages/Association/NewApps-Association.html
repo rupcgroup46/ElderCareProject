@@ -17,6 +17,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.13.1/underscore-min.js"></script>
   <!-- Include SweetAlert JavaScript&CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
   <link href="../../CSS/dataTable.css" rel="stylesheet" />
   <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
   <script>
@@ -29,6 +30,19 @@
       })
         .then(response => response.json())
         .then(backdata => document.getElementById('assoName').innerHTML = backdata[0].name)
+
+      if(localStorage.getItem(sessionStorage.association_id)){
+        Swal.fire({
+          title:localStorage.getItem(sessionStorage.association_id),
+          icon:'info',
+          confirmButtonText: 'אישור',
+        })
+        .then((result) => {
+          if (result.isConfirmed) {
+            localStorage.removeItem(sessionStorage.association_id)
+          }
+        })
+      }
 
       //Get All New Applications data for a specific association
       fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/new/${sessionStorage.getItem("association_id")}`, {
@@ -51,7 +65,7 @@
               ],
               "columnDefs": [
                 {
-                  className: "dt-head-right", targets: [ 0, 1, 2,3,4,5,6,7,8,9 ] 
+                  className: "dt-head-right", targets: [ 0, 1, 2,3,4,5,6,7,8 ] 
                 }
               ],
               columns: [
@@ -210,6 +224,7 @@
               SentAssociationsID: tmpApp[0].sentAssociationsID
             }
             console.log("updateApp: ", updateApp)
+
             //PUT application's details
             return fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications`, {
               method: 'PUT',
@@ -234,7 +249,7 @@
 </head>
 <body>
   <ul class="header">
-    <li class="brandName"><img class="logoImg" src="/ClientSide/images/simpleLogo.jpg"></li>
+    <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     <li class="associationName"><p id="assoName"></p><i class="fa-regular fa-circle-user"></i></li>
   </ul>
   <div>
