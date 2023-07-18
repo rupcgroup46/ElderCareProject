@@ -2,13 +2,16 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Application</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
     <link href="../../CSS/ElderCSS/App-Elder.css" rel="stylesheet" />
+    <!-- Include SweetAlert JavaScript&CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
     <script>
 
@@ -59,7 +62,10 @@
         //form submit
         $("#helpRequest").submit(function(){
           if (selectedDivs.length == 0) {
-            alert("יש לבחור תחום סיוע נדרש");
+            Swal.fire({
+              title: 'יש לבחור סוג סיוע נדרש',
+              icon: 'error',
+            })
             return false;
           }
           
@@ -115,26 +121,19 @@
             })
               .then(response => response.json())
               .then(associations => {
-                console.log("all relevant associations: ", associations);
-                associations.sort((a, b) => b.helpingRatio - a.helpingRatio); //sort the array by their helping ratio
+                console.log("all relevant associations: ", associations); //all associations
+                associations.sort((a, b) => b.helpingRatio - a.helpingRatio); //sort by helping ratio
                 console.log("sorted relevant associations: ", associations);
-                switch (true) {
-                  case (associations.length > 0 && associations.length <= 5):
-                    for (let i = 0; i < associations.length; i++) {
-                      chosenAssociations.push(associations[i]);
-                    }
-                    break;
-                  case (associations.length > 5):
-                    for (let i = 0; i < 5; i++) {
-                      chosenAssociations.push(associations[i]);
-                    }
-                    break;
-                }
-                console.log("chosen: ", chosenAssociations);
-                for (let i = 0; i < chosenAssociations.length; i++) {
-
+                var topTwoAssociations = associations.slice(0, 2); //take the top 2
+                var remainingAssociations = associations.slice(2);
+                var shuffledAssociations = remainingAssociations.sort(() => Math.random() - 0.5); //shuffle the rest
+                var randomAssociations = shuffledAssociations.slice(0, 3); //take random 3
+                var combinedAssociations = [...topTwoAssociations, ...randomAssociations]; //combine into 5 
+                console.log("chosen: ", combinedAssociations);
+                for (let i = 0; i < combinedAssociations.length; i++) {
+                  localStorage.setItem(combinedAssociations[i].id, 'שים לב, התקבלה פנייה חדשה')
                   //GET association's details
-                  fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${chosenAssociations[i].id}`, {
+                  fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/${combinedAssociations[i].id}`, {
                     method: 'GET',
                     headers: {
                       'Content-Type': 'application/json'
@@ -148,7 +147,7 @@
                     .then(tmpAssociation => {
                       //create updated association object
                       updateAssociation = {
-                        ID:chosenAssociations[i].id,
+                        ID:combinedAssociations[i].id,
                         Name: tmpAssociation[0].name,
                         Email: tmpAssociation[0].email,
                         Password: tmpAssociation[0].password,
@@ -173,7 +172,7 @@
                     .then(data => console.log("Association was updated: ", data))
                     .catch(error => console.error(error));
                 }
-                chosenAssociationsStr = chosenAssociations.map(item => item.id).join(',');
+                chosenAssociationsStr = combinedAssociations.map(item => item.id).join(',');
                 return chosenAssociationsStr;
               })
               .then(chosenAssociationsStr => {
@@ -187,7 +186,11 @@
                 if (chosenAssociationsStr == ""){
                   status = "לא נמצאה עמותה";
                   endDate = today;
-                  alert("לא נמצאו עמותות מתאימות");
+                  Swal.fire({
+                    title: 'מצטערים אך לא נמצאו עמותות העונות לצרכים שלכם',
+                    text: 'אנא נסו ליצור קשר עם משרד הרווחה באזור מגוריכם',
+                    icon: 'error',
+                  })
                 }
                 
                 //Create new application object
@@ -216,7 +219,14 @@
               .then(response => response.json())
               .then(data => {
                 console.log("Application Was Added: ", data)
-                window.location.href='AppSubmit.html';
+                Swal.fire({
+                  title: 'בקשתך התקבלה',
+                  icon: 'success',
+                })
+                .then((result) => {
+                  if (result.isConfirmed)
+                    window.location.href = "landingPage.html";
+                })
               })
               .catch(error => console.error(error));
           }
@@ -265,16 +275,21 @@
     </script>
 </head>
 <body>
-    <div class="container contact-form">
+  <div id="container">
+    <div class="header">
+      <img src="../../images/simpleLogo.jpg">
+    </div>
+    <div class="contact-form">
         <form id="helpRequest">
             <div class="row">
                 <div class="col-md-6">
                     <div class="form-group">
                         <table>
-                            <tr>
-                                <p>:אנא בחר את סוגי הסיוע המבוקשים</p>
-                            </tr>
-                            <tr>
+                            <thead>
+                                <tr><th colspan="3"><p>:אנא בחר את סוגי הסיוע המבוקשים</p></th></tr>
+                            </thead>
+                            <tbody>
+                              <tr>
                                 <td>
                                     <div id="ביגוד" class="selectType">
                                         <img src="../../images/clothes icon.png" />
@@ -314,10 +329,13 @@
                                     </div>
                                 </td>
                             </tr>
+                            </tbody>
+                            
                         </table>
                     </div>
                 </div>
                 <div class="col-md-6">
+                  <div>
                     <p>:אנא מלא את פרטי מבקש הסיוע</p>
                     <div class="form-group">
                         <input id="nameInput" type="text" name="txtName" class="form-control" placeholder="* שם מלא" value="" />
@@ -355,9 +373,11 @@
                     <div class="form-group">
                       <input type="submit" name="btnSubmit" class="btnContact" value="שלח פנייה" />
                     </div>
+                  </div>
                 </div>
             </div>
         </form>
     </div>
+  </div>
 </body>
 </html>

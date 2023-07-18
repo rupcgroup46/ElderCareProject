@@ -2,11 +2,14 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>ElderCare</title>
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <link href="../../CSS/AdminCSS/AdminLogin.css" rel="stylesheet" />
+    <!-- Include SweetAlert JavaScript&CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
+    <link href="../../CSS/AssociationCSS/AssoLogin.css" rel="stylesheet" />
 
     <script>
       $(document).ready(function() {
@@ -31,12 +34,21 @@
             })
             .then(data => {
               console.log("Logged in: ",data);
-              window.location.href = "AllApps-Admin.html";
-              alert("ברוכים השבים!");
+              Swal.fire({
+                title: 'ברוכים השבים!',
+                icon: 'success',
+              })
+              .then((result) => {
+                if (result.isConfirmed)
+                  window.location.href = "NewApps-Admin.html";
+              })
             })
             .catch(error => {
               console.error("Error: wrong inputs ",error)
-              alert("שם משתמש או סיסמה שגויים, אנא נסה שנית!");
+              Swal.fire({
+                title: 'סיסמה שגויה, אנא נסה שנית',
+                icon: 'error'
+              })
               clearFields();
             });
 
@@ -51,6 +63,10 @@
     </script>
 </head>
 <body>
+  <div id="container">
+    <div class="header">
+      <img src="../../images/simpleLogo.jpg">
+    </div>
     <div class="container contact-form text-center">
         <form id="adminLogin" method="post">
               <div class="">
@@ -67,5 +83,7 @@
               </div>
         </form>
     </div>
+  </div>
+    
 </body>
 </html>

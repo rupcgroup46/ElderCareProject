@@ -2,17 +2,46 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>All Applications - Admin</title>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
             integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
-    <link href="../../CSS/AdminCSS/AllApps-Admin.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
+    <link href="../../CSS/dataTable.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
+    <!-- Include SweetAlert JavaScript&CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
     <script>
       $(document).ready(function () {
+        var associations = [];
+        var assoArray = [];
+        var filteredAssociations = [];
+        var availableAssociations = [];
+
+        //Get All Associations
+        fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Associations', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log("all associations: ", data);
+            associations = data;
+           })
+          .catch(error => console.error(error));
 
         //Get All Applications data
         fetch('https://proj.ruppin.ac.il/cgroup46/prod/api/Applications/all', {
@@ -25,19 +54,28 @@
           .then(data => {
             console.log("all applications: ", data);
             applications = data;
-            try {
-              table = $("#appsTable").dataTable({
+            let table = new DataTable("#appsTable", {
                 data: data,
                 pageLength: 10,
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                "columnDefs": [
+                  {
+                    className: "dt-head-right", targets: [ 0, 1, 2,3,4,5,6,7,8,9] 
+                  }
+                ],
                 columns: [
                   {
-                    data: "sentAssociationsID",
-                    render: function (data, type, row, meta) {
-                      return `<button id='i${row.id}' class='fa-solid fa-ellipsis'></button>` //ADD MODAL
-                    }
+                    className: 'dt-control',
+                    orderable: false,
+                    data: null,
+                    defaultContent: ''
                   },
                   {
                     data: "associationName",
+                    orderable: false,
                     render: function (data, type, row, meta) {
                       if (row.associationName == 0) {
                         return "-";
@@ -50,11 +88,16 @@
                   {
                     data: "updateDate",
                     render: function (data, type, row, meta) {
+                      date = new Date(row.updateDate)
+                      day = date.getDate().toString().padStart(2, "0");
+                      month = (date.getMonth() + 1).toString().padStart(2, "0");
+                      year = date.getFullYear().toString().substr(-2);
+                      formattedDate = `${day}/${month}/${year}`;
                       if (row.updateDate.slice(0, 10) == "1970-01-01") {
                         return "טרם עודכן";
                       }
                       else {
-                        return row.updateDate.slice(0, 10);
+                        return formattedDate;
                       }
                     }
                   },
@@ -71,39 +114,241 @@
                   },
                   { data: "helpType" },
                   { data: "city" },
-                  { data: "phoneNum" },
-                  { data: "name" },
+                  { data: "phoneNum",orderable: false, },
+                  { data: "name",orderable: false, },
                   {
                     data: "startDate",
                     render: function (data, type, row, meta) {
-                      return row.startDate.slice(0, 10);
+                      date = new Date(row.startDate)
+                      day = date.getDate().toString().padStart(2, "0");
+                      month = (date.getMonth() + 1).toString().padStart(2, "0");
+                      year = date.getFullYear().toString().substr(-2);
+                      formattedDate = `${day}/${month}/${year}`;
+                      return formattedDate;
                     }
                   },
                   { data: "id" }
                 ],
-                order: [[9, 'desc']],
-              });
-            }
-            catch (err) {
-              alert(err);
-            }
-          })
-          .catch(error => console.error(error));
+                order: [[8, 'desc'],[2, 'asc']],
+                createdRow: function (row, data, dataIndex) {
+                  var startDate = data.updateDate;
+                  var today = new Date();
+                  var daysDiff = Math.round((today.getTime() - new Date(startDate).getTime()) / (1000 * 3600 * 24));
 
+                  if (daysDiff > 15) { //if it's been 15 days since the app was created, highlight it
+                    $(row).addClass("over-15");
+                  }
+                }
+              });
+              table.on('click', 'td.dt-control', function (e) {
+                  let tr = e.target.closest('tr');
+                  let row = table.row(tr);
+                  let rowData = row.data()
+                  if (row.child.isShown()) { //hide
+                      row.child.hide();
+                  }
+                  else { //show
+                      row.child(format(rowData)).show();
+                      console.log("rowData ", rowData)
+                      document.querySelector('button[name="closeApp"]').addEventListener('click', function(){
+                        //create updated application object
+                        updateApp = {
+                          ID: rowData.id,
+                          Status: "לא נמצאה עמותה",
+                          HelpType: rowData.helpType,
+                          City: rowData.city,
+                          StartDate: rowData.startDate,
+                          UpdateDate: new Date(),
+                          EndDate: new Date(),
+                          ElderID: rowData.elderId,
+                          HandlingAssociationID: 0,
+                          SentAssociationsID: rowData.sentAssociationsID
+                        }
+                        console.log("updateApp: ", updateApp)
+
+                        //PUT application's details
+                        fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications`, {
+                          method: 'PUT',
+                          headers: {
+                            'Content-Type': 'application/json'
+                          },
+                          body: JSON.stringify(updateApp)
+                        })
+                        .then(response => response.json())
+                        .then(appData => {
+                          console.log("Application was updated: ", appData)
+                          Swal.fire({
+                            title: 'הטיפול בפנייה הסתיים',
+                            icon: 'success'
+                          })
+                        })
+                        .catch(error => console.error(error));
+                      })
+                      //add event listener to button to send the application to more associations
+                      document.querySelector('button[name="sendToMore"]').addEventListener('click', function(){
+                        if (availableAssociations.length > 0) { //if there are more available associations
+                          var shuffledAssociations = availableAssociations.sort(() => Math.random() - 0.5); //shuffle the array
+                          var randomAssociations = shuffledAssociations.slice(0,5) //take random 5 associations
+                          for (let i = 0; i < randomAssociations.length; i++) {
+                            localStorage.setItem(randomAssociations[i].id, 'שים לב, התקבלה פנייה חדשה')
+                            //update each association's TotalApps field
+                            var updateAssociation = {
+                              ID:randomAssociations[i].id,
+                              Name: randomAssociations[i].name,
+                              Email: randomAssociations[i].email,
+                              Password: randomAssociations[i].password,
+                              HelpType: randomAssociations[i].helpType,
+                              City: randomAssociations[i].city,
+                              TotalApps: randomAssociations[i].totalApps+1,
+                              HelpedApps: randomAssociations[i].helpedApps,
+                              HelpingRatio: randomAssociations[i].helpingRatio,
+                            }
+                            console.log("updateAssociation: ", updateAssociation)
+
+                            //PUT association's details
+                            fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations`, {
+                              method: 'PUT',
+                              headers: {
+                                'Content-Type': 'application/json'
+                              },
+                              body: JSON.stringify(updateAssociation)
+                            })
+                            .then(response => response.json())
+                            .then(data => console.log("Association was updated: ", data))
+                            .catch(error => console.error(error));
+                          }
+                          chosenAssociationsStr = randomAssociations.map(item => item.id).join(','); 
+                          newString = chosenAssociationsStr + ',' +rowData.sentAssociationsID
+
+                          //create updated application object
+                          updateApp = {
+                            ID: rowData.id,
+                            Status: "null",
+                            HelpType: rowData.helpType,
+                            City: rowData.city,
+                            StartDate: rowData.startDate,
+                            UpdateDate: new Date(),
+                            EndDate: new Date(null),
+                            ElderID: rowData.elderId,
+                            HandlingAssociationID: 0,
+                            SentAssociationsID: newString
+                          }
+                          console.log("updateApp: ", updateApp)
+
+                          //PUT application's details
+                          fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications`, {
+                            method: 'PUT',
+                            headers: {
+                              'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(updateApp)
+                          })
+                          .then(response => response.json())
+                          .then(appData => {
+                            console.log("Application was updated: ", appData)
+                            Swal.fire({
+                              title: 'הפנייה נשלחה לעמותות נוספות!',
+                              icon: 'success'
+                            })
+                          })
+                          .catch(error => console.error(error));
+                        } 
+                        else {
+                          Swal.fire({
+                            title: 'לא נותרו עוד עמותות רלוונטיות',
+                            text: '?השאר את הטיפול בידי העמותות הנוכחיות',
+                            icon: 'error',
+                            showCancelButton: true,
+                            confirmButtonText: 'כן',
+                            cancelButtonText: 'לא'
+                          })
+                          .then((result) => {
+                            if (result.isConfirmed) {
+                              Swal.fire({
+                                title: 'הטיפול נותר בידי העמותות הנוכחיות',
+                                icon: 'success'
+                              })
+                            } else {
+                              //create updated application object
+                              updateApp = {
+                                ID: rowData.id,
+                                Status: "לא נמצאה עמותה",
+                                HelpType: rowData.helpType,
+                                City: rowData.city,
+                                StartDate: rowData.startDate,
+                                UpdateDate: new Date(),
+                                EndDate: new Date(),
+                                ElderID: rowData.elderId,
+                                HandlingAssociationID: 0,
+                                SentAssociationsID: rowData.sentAssociationsID
+                              }
+                              console.log("updateApp: ", updateApp)
+
+                              //PUT application's details
+                              fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Applications`, {
+                                method: 'PUT',
+                                headers: {
+                                  'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify(updateApp)
+                              })
+                              .then(response => response.json())
+                              .then(appData => {
+                                debugger
+                                console.log("Application was updated: ", appData)
+                                Swal.fire({
+                                  title: 'הטיפול בפנייה הסתיים',
+                                  icon: 'success'
+                                })
+                              })
+                              .catch(error => console.error(error));
+                            }
+                          })
+                        }
+                      })
+                  }
+              });
+              function format(d) { //create expandable row
+                assoArray = d.sentAssociationsID.split(",").map(Number);
+                filteredAssociations = associations.filter(obj => assoArray.includes(obj.id));
+                var str = ''
+                for (let i = 0; i < filteredAssociations.length; i++) {
+                  str += `<li>${filteredAssociations[i].name}</li>`
+                }
+                //GET relevant associations
+                fetch(`https://proj.ruppin.ac.il/cgroup46/prod/api/Associations/helpType/${d.helpType}/city/${d.city}`, {
+                  method: 'GET',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                })
+                .then(response => response.json())
+                .then(relevantAssociations => {
+                  availableAssociations = relevantAssociations.filter(obj2 => !filteredAssociations.some(obj1 => obj1.id === obj2.id));
+                })
+                .catch(error => console.error(error));
+
+                return (`<dl><dt><p class="dtHeader">עמותות אליהן הופנתה הפנייה:</p></dt>
+                  <dt class="sentToAssoUL">${str}</dt><br>
+                  <button name='sendToMore' id='${d.id}'>העבר פנייה לעמותות נוספות</button>
+                  <button name='closeApp' id='${d.id}'>סיים טיפול בפנייה</button>
+                  </dl>`);
+              }
+            })
+            .catch(error => console.error(error));
       });
     </script>
 </head>
 <body>
-    <ul>
+    <ul class="">
         <li><a class="active" href="AllApps-Admin.html">כלל הפניות</a></li>
         <li><a href="NewApps-Admin.html">פניות חדשות</a></li>
         <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
         <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
         <li><a href="AssociationsManaging.html">ניהול עמותות</a></li>
+        <li><a href="Events.html">אירועים</a></li>
+        <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     </ul>
-    <!-- <div>
-        <h2>כלל הפניות</h2>
-    </div> -->
     <table id="appsTable" class="display" style="width:100%">
         <thead>
             <tr>

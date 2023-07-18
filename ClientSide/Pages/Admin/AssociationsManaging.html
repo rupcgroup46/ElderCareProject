@@ -2,14 +2,23 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Associations Management - Admin</title>
     <script src="https://code.jquery.com/jquery-3.6.3.min.js"
             integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU="
             crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
     <script src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.print.min.js"></script>
     <link href="../../CSS/dataTable.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/16d32e4ea0.js" crossorigin="anonymous"></script>
+    <!-- Include SweetAlert JavaScript&CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.20/dist/sweetalert2.all.min.js"></script>
 
     <script>
       $(document).ready(function () {
@@ -29,13 +38,12 @@
               table = $("#associationsTable").dataTable({
                 data: data,
                 pageLength: 10,
-                columns: [
+                "columnDefs": [
                   {
-                    data: "email",
-                    render: function (data, type, row, meta) {
-                      return `<button id='i${row.id}' class='fa-solid fa-ellipsis'></button>` //ADD MODAL
-                    }
-                  },
+                    className: "dt-head-right", targets: [ 0, 1, 2,3,4,5,6 ] 
+                  }
+                ],
+                columns: [
                   {
                      data: "helpingRatio",
                      render: function (data, type, row, meta) {
@@ -54,14 +62,14 @@
                   { data: "name" },
                   { data: "id" }
                 ],
-                order: [[7, 'asc']],
+                order: [[6, 'asc']],
 
                 //filtering options for dataTable
                 initComplete: function () {
                   var table = this.api();
 
                   //filters for helpType and city
-                  table.columns([4,5]).every(function () {
+                  table.columns([3,4]).every(function () {
                     var column = this;
                     var select = $('<select><option value=""></option></select>')
                       .appendTo($(column.footer()).empty())
@@ -93,14 +101,12 @@
         <li><a href="FinishedApps-Admin.html">פניות סגורות</a></li>
         <li><a href="DeniedApps.html">פניות שלא הסתייעו</a></li>
         <li><a class="active" href="AssociationsManaging.html">ניהול עמותות</a></li>
+        <li><a href="Events.html">אירועים</a></li>
+        <li class="brandName"><img class="logoImg" src="../../images/simpleLogo.jpg"></li>
     </ul>
-    <!-- <div>
-        <h2>ניהול עמותות</h2>
-    </div> -->
     <table id="associationsTable" class="display" style="width:100%">
         <thead>
             <tr>
-                <th></th>
                 <th>אחוז הצלחה</th>
                 <th>פניות שטופלו</th>
                 <th>פניות שהועברו</th>
@@ -111,7 +117,7 @@
             </tr>
         </thead>
         <tfoot>
-          <th></th><th></th><th></th><th></th><th></th><th></th><th></th><th></th>
+          <th></th><th></th><th></th><th></th><th></th><th></th><th></th>
         </tfoot>
     </table>
 </body>

@@ -130,3 +130,82 @@ div#associationsTable_filter {
   background-color: transparent;
   padding: 4px;
 }
+
+ul.header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0px 10px;
+  align-items: center;
+}
+
+ul.header > li.brandName {
+    font-family: monospace;
+    font-size: 19px;
+    color: #666666;
+}
+
+ul.header > li.associationName {
+  font-family: arial;
+  font-size: 19px;
+  color: #666666;
+  display: flex;
+  align-items: center;
+}
+
+i.fa-regular.fa-circle-user {
+  padding-left: 10px;
+}
+
+tr.over-15.even {
+  background-color: rgb(255 0 0 / 15%);
+}
+
+tr.over-15.odd {
+  background-color: rgb(255 0 0 / 15%);
+}
+
+div.dt-buttons > button.dt-button {
+  border-color: #fff6;
+  border-radius: 10px;
+  color: grey;
+  font-weight: 600;
+}
+
+dl > button {
+  border-color: #fff6;
+  border-radius: 10px;
+  color: grey;
+  font-weight: 600;
+}
+
+td {
+  direction: rtl;
+}
+
+.dtHeader {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+table.dataTable td.dt-control::before {
+  background-color: #9e9e9e;
+}
+
+table.dataTable tr.dt-hasChild td.dt-control:before {
+  background-color: #9e9e9e;
+}
+
+.dt-head-center {text-align: center;}
+
+.sentToAssoUL {
+  display: flex;
+  flex-direction: column;
+}
+
+.logoImg {
+  width:160px;
+}
+
+li.brandName {
+  float:left;
+}
