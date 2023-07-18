@@ -131,7 +131,6 @@
             var buttons = document.querySelectorAll("button[name='join']")
             for (let i = 0; i < buttons.length; i++) {
               buttons[i].addEventListener('click', function(){
-                debugger
               var id = this.id
               var selectedEvent = data.find(a => a.eventId == id);
               updatedEvent = {
